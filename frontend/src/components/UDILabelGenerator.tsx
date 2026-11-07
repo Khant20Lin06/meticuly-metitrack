@@ -535,10 +535,13 @@ export const UDILabelGenerator: React.FC<UDILabelGeneratorProps> = ({ order, dhr
             <div className="flex items-center justify-between text-zinc-400">
               <span>Signer:</span>
               <span className="text-zinc-200 font-medium">
-                {dhrData.digital_signature.signer.signer_name} (
-                {dhrData.digital_signature.signer.signer_role_display ||
-                  dhrData.digital_signature.signer.signer_role}
-                )
+                {(() => {
+                  const sName = dhrData.digital_signature.signer.signer_name;
+                  const sRole =
+                    dhrData.digital_signature.signer.signer_role_display ||
+                    dhrData.digital_signature.signer.signer_role;
+                  return sName === sRole || !sRole ? sName : `${sName} (${sRole})`;
+                })()}
               </span>
             </div>
             <div className="flex items-center justify-between text-zinc-400">

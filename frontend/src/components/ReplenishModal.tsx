@@ -123,12 +123,12 @@ export const ReplenishModal: React.FC<ReplenishModalProps> = ({
             />
           </div>
 
-          {/* Formula Callout */}
-          <div className="text-[11px] text-zinc-500 font-mono">
-            Formula: Stock_new = {Number(resource.total_available)} + {quantity} ={' '}
-            <strong className="text-emerald-400">
+          {/* Projected Stock Balance Callout */}
+          <div className="text-[11px] text-zinc-400 font-medium flex items-center justify-between p-2 rounded-lg bg-zinc-900 border border-zinc-800">
+            <span>Projected New Balance:</span>
+            <span className="font-mono font-bold text-emerald-400">
               {(Number(resource.total_available) + Number(quantity)).toFixed(2)} {resource.unit.toLowerCase()}
-            </strong>
+            </span>
           </div>
 
           </div>

@@ -344,10 +344,10 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
                       {metaSuccess ? (
                         <>
                           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                          <span>Saved Successfully!</span>
+                          <span>Specifications Saved!</span>
                         </>
                       ) : (
-                        <span>Update Metadata</span>
+                        <span>Save Case Specifications</span>
                       )}
                     </button>
                   </div>
@@ -359,9 +359,9 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
                 <span className="text-zinc-300 font-semibold block mb-0.5">
                   ISO 13485:2016 Regulatory Notice
                 </span>
-                Modifications to patient reference or priority are logged into the append-only system
-                audit trail. Current Station and State Transitions cannot be manually altered and require
-                certified electronic sign-off station advance.
+                Modifications to patient reference or priority are recorded in the immutable compliance
+                audit trail under FDA 21 CFR Part 11. Current Station and State Transitions cannot be manually
+                altered and require certified electronic sign-off station advance.
               </div>
             </div>
           )}
@@ -397,7 +397,7 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
                   <span className="text-sky-300 font-semibold block text-xs">
                     Total Cumulative Case Cost
                   </span>
-                  <span className="text-[10px] text-zinc-400">Formula: Σ(Quantity × Unit Cost)</span>
+                  <span className="text-[10px] text-zinc-400">Aggregated Direct Materials & Machine Runtime</span>
                 </div>
                 <span className="font-mono text-lg font-bold text-sky-300">
                   ${Number(costData?.total_cost || order.total_cost || 0).toFixed(2)}
@@ -494,7 +494,11 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
                   </div>
                   {dhrData?.digital_signature?.signer?.key_fingerprint && (
                     <div className="col-span-2 pt-1 border-t border-zinc-800/60 flex items-center justify-between">
-                      <span className="text-zinc-500 text-[10px]">ECDSA PUBLIC KEY FINGERPRINT</span>
+                      <span className="text-zinc-500 text-[10px]">
+                        {dhrData?.digital_signature?.algorithm === 'ECDSA-SHA256-P256'
+                          ? 'ECDSA PUBLIC KEY FINGERPRINT'
+                          : 'SIGNING KEY FINGERPRINT'}
+                      </span>
                       <span className="font-mono text-cyan-400 text-[10px] bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-800/40">
                         {dhrData.digital_signature.signer.key_fingerprint}
                       </span>

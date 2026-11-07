@@ -581,8 +581,9 @@ export const ThreeImplantViewer: React.FC<ThreeImplantViewerProps> = ({ implantT
             <span className="font-mono text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
               {caseId} • Plate Center
             </span>
-            <span className="font-mono text-[9px] text-zinc-600">
-              Left Click: Orbit • Right Click: Pan • Scroll: Zoom
+            <span className="font-mono text-[9px] text-zinc-500">
+              <span className="hidden sm:inline">Left Click: Rotate • Right Click: Pan • Scroll: Zoom</span>
+              <span className="sm:hidden">1-Finger: Rotate • 2-Finger: Pan/Zoom</span>
             </span>
           </div>
         </div>
@@ -603,8 +604,11 @@ export const ThreeImplantViewer: React.FC<ThreeImplantViewerProps> = ({ implantT
           </div>
           <div className="border-r border-zinc-800/60">
             <span className="text-zinc-500 block text-[10px] uppercase font-semibold">Dimensions</span>
-            <span className="font-mono font-bold text-sky-400 text-xs truncate block px-1">
-              {meshStats.dimensions}
+            <span
+              className="font-mono font-bold text-sky-400 text-[10px] sm:text-xs truncate block px-0.5"
+              title={meshStats.dimensions}
+            >
+              {meshStats.dimensions.replace(/ x /g, '×')}
             </span>
           </div>
           <div>
