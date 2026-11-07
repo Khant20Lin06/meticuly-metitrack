@@ -14,6 +14,7 @@ import { TopBar } from '../components/TopBar';
 import { PipelineBoard } from '../components/PipelineBoard';
 import { MasterTableView } from '../components/MasterTableView';
 import { AnalyticsView } from '../components/AnalyticsView';
+import { WarehouseStockView } from '../components/WarehouseStockView';
 import { SecurityAuditView } from '../components/SecurityAuditView';
 import { DetailDrawer } from '../components/DetailDrawer';
 import { AdvanceModal } from '../components/AdvanceModal';
@@ -212,11 +213,11 @@ export default function MetiTrackDashboard() {
           )}
 
           {activeView === 'analytics' && (
-            <AnalyticsView activeSubTab="telemetry" />
+            <AnalyticsView />
           )}
 
           {activeView === 'inventory' && (
-            <AnalyticsView activeSubTab="inventory" />
+            <WarehouseStockView />
           )}
 
           {activeView === 'security' && (
