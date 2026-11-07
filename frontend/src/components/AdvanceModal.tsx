@@ -322,13 +322,13 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
         </div>
 
         {/* 5-Station Visual Stepper Pipeline Header */}
-        <div className="px-3 sm:px-5 py-2.5 bg-zinc-900/40 border-b border-zinc-800/80 shrink-0 overflow-x-auto scrollbar-none">
-          <div className="flex items-center gap-1 min-w-[380px] sm:min-w-0 sm:justify-between">
+        <div className="px-3 sm:px-5 py-2.5 bg-zinc-900/40 border-b border-zinc-800/80 shrink-0 overflow-x-auto scrollbar-none w-full max-w-full">
+          <div className="flex items-center gap-1.5 w-max min-w-full sm:min-w-0 sm:justify-between pb-0.5">
             {[1, 2, 3, 4, 5].map((seq) => {
               const isPast = seq < currentSeq;
               const isCurrent = seq === currentSeq;
               const isTarget = seq === nextSeq;
-              const shortName = seq === 1 ? 'CAD' : seq === 2 ? 'SLM Print' : seq === 3 ? 'CNC / Anneal' : seq === 4 ? 'QA Sterile' : 'UDI Release';
+              const shortName = seq === 1 ? 'CAD' : seq === 2 ? 'SLM Print' : seq === 3 ? 'CNC' : seq === 4 ? 'QA Sterile' : 'UDI Release';
 
               let badgeClass = 'bg-zinc-900 text-zinc-500 border-zinc-800';
               if (isPast) badgeClass = 'bg-emerald-950/40 text-emerald-400 border-emerald-700/50';
@@ -336,14 +336,14 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
               if (isTarget) badgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500 font-bold animate-pulse';
 
               return (
-                <div key={seq} className="flex-1 flex items-center">
-                  <div className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border text-[10px] w-full justify-center shrink-0 ${badgeClass}`}>
+                <div key={seq} className="flex items-center shrink-0">
+                  <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] shrink-0 whitespace-nowrap ${badgeClass}`}>
                     <span className="font-mono font-bold">{seq}</span>
-                    <span className="truncate">{shortName}</span>
+                    <span>{shortName}</span>
                     {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />}
                     {isPast && <Check className="w-3 h-3 text-emerald-400" />}
                   </div>
-                  {seq < 5 && <span className="text-zinc-700 mx-0.5 text-xs">›</span>}
+                  {seq < 5 && <span className="text-zinc-700 mx-1 text-xs shrink-0">›</span>}
                 </div>
               );
             })}
@@ -351,8 +351,8 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
         </div>
 
         {/* Form Body - Scrollable Container */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col justify-between">
-          <div className="p-4 sm:p-5 space-y-3.5 sm:space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col justify-between w-full max-w-full">
+          <div className="p-3.5 sm:p-5 space-y-3.5 sm:space-y-4 text-xs w-full max-w-full">
           {/* Error Message Alert */}
           {errorMessage && (
             <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-800/80 text-rose-200 flex items-start gap-2.5">
@@ -483,60 +483,75 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
                           : 'bg-zinc-900/90 border-zinc-700/80 shadow-sm'
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        {/* Select Resource */}
-                        <select
-                          value={item.resource_id}
-                          onChange={(e) => handleUpdateResource(index, 'resource_id', e.target.value)}
-                          className="flex-1 bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-zinc-100 text-xs font-medium focus:border-sky-400 focus:outline-none"
-                        >
-                          {allResources.map((r) => (
-                            <option key={r.id} value={r.id}>
-                              {r.name} (${Number(r.cost_per_unit).toFixed(2)} / {r.unit.toLowerCase()})
-                            </option>
-                          ))}
-                        </select>
+                      {/* Responsive BOM Row: Stacks neatly on mobile without expanding width */}
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                        {/* Resource Selector & Mobile Remove */}
+                        <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                          <select
+                            value={item.resource_id}
+                            onChange={(e) => handleUpdateResource(index, 'resource_id', e.target.value)}
+                            className="flex-1 min-w-0 bg-zinc-950 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-zinc-100 text-xs font-medium focus:border-sky-400 focus:outline-none truncate"
+                          >
+                            {allResources.map((r) => (
+                              <option key={r.id} value={r.id}>
+                                {r.name} (${Number(r.cost_per_unit).toFixed(2)} / {r.unit.toLowerCase()})
+                              </option>
+                            ))}
+                          </select>
 
-                        {/* Numerical Stepper Input */}
-                        <div className="flex items-center">
+                          {/* Remove button on mobile (< sm) */}
                           <button
                             type="button"
-                            onClick={() => handleStepQuantity(index, -1)}
-                            className="px-2 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 rounded-l-lg font-bold text-xs transition"
+                            onClick={() => handleRemoveResource(index)}
+                            className="p-1.5 text-zinc-400 hover:text-rose-400 transition rounded hover:bg-zinc-800 shrink-0 sm:hidden"
+                            title="Remove resource"
                           >
-                            -
-                          </button>
-                          <input
-                            type="number"
-                            step="0.1"
-                            min="0"
-                            value={item.quantity === 0 ? '' : item.quantity}
-                            onChange={(e) => handleUpdateResource(index, 'quantity', e.target.value)}
-                            className="w-20 bg-zinc-950 border-y border-zinc-700 px-1 py-1.5 text-center font-mono font-bold text-white text-xs focus:border-sky-400 focus:outline-none"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleStepQuantity(index, 1)}
-                            className="px-2 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 rounded-r-lg font-bold text-xs transition"
-                          >
-                            +
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
 
-                        {/* Unit Badge */}
-                        <span className="text-[10px] font-mono text-zinc-300 bg-zinc-800 px-1.5 py-1 rounded border border-zinc-700/60 uppercase">
-                          {resObj?.unit.toLowerCase() || ''}
-                        </span>
+                        {/* Quantity Stepper & Desktop Remove */}
+                        <div className="flex items-center justify-between sm:justify-start gap-2">
+                          <div className="flex items-center">
+                            <button
+                              type="button"
+                              onClick={() => handleStepQuantity(index, -1)}
+                              className="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 rounded-l-lg font-bold text-xs transition"
+                            >
+                              -
+                            </button>
+                            <input
+                              type="number"
+                              step="0.1"
+                              min="0"
+                              value={item.quantity === 0 ? '' : item.quantity}
+                              onChange={(e) => handleUpdateResource(index, 'quantity', e.target.value)}
+                              className="w-16 sm:w-20 bg-zinc-950 border-y border-zinc-700 px-1 py-1 text-center font-mono font-bold text-white text-xs focus:border-sky-400 focus:outline-none"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleStepQuantity(index, 1)}
+                              className="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 rounded-r-lg font-bold text-xs transition"
+                            >
+                              +
+                            </button>
+                          </div>
 
-                        {/* Remove */}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveResource(index)}
-                          className="p-1.5 text-zinc-400 hover:text-rose-400 transition rounded hover:bg-zinc-800"
-                          title="Remove item"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                          {/* Unit Badge */}
+                          <span className="text-[10px] font-mono text-zinc-300 bg-zinc-800 px-1.5 py-1 rounded border border-zinc-700/60 uppercase shrink-0">
+                            {resObj?.unit.toLowerCase() || ''}
+                          </span>
+
+                          {/* Remove button on desktop (sm:) */}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveResource(index)}
+                            className="hidden sm:block p-1.5 text-zinc-400 hover:text-rose-400 transition rounded hover:bg-zinc-800 shrink-0"
+                            title="Remove item"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
 
                       {/* Stock availability & Line Cost Subtotal */}
@@ -579,39 +594,39 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
         </div>
 
         {/* Sticky Modal Footer Actions */}
-          <div className="p-3 sm:p-4 bg-zinc-900/95 border-t border-zinc-800/90 shrink-0 sticky bottom-0 z-20 backdrop-blur flex items-center justify-between gap-2 select-none">
-            <div className="text-[11px] text-zinc-400 truncate max-w-[120px] sm:max-w-none">
-              Step {currentSeq} ➔ {isFinalStep ? 'Release' : `Step ${nextSeq}`}
-            </div>
+        <div className="p-3 sm:p-4 bg-zinc-900/95 border-t border-zinc-800/90 shrink-0 sticky bottom-0 z-20 backdrop-blur flex items-center justify-between gap-2 select-none w-full max-w-full">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg font-medium transition border border-zinc-700 text-xs active:scale-95 shrink-0"
+          >
+            Cancel
+          </button>
 
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              <button
-                type="button"
-                onClick={onClose}
-                disabled={isSubmitting}
-                className="px-3.5 sm:px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg font-medium transition border border-zinc-700 text-xs active:scale-95"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting || hasStockError}
-                className="px-4 sm:px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-lg font-bold shadow-md shadow-sky-950/60 transition flex items-center gap-1.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Advancing...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Advance to {isFinalStep ? 'Final Release' : nextStep?.name || 'Next Station'}</span>
-                    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting || hasStockError}
+            className="flex-1 sm:flex-initial px-4 sm:px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-lg font-bold shadow-md shadow-sky-950/60 transition flex items-center justify-center gap-1.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 truncate min-w-0"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
+                <span className="truncate">Advancing...</span>
+              </>
+            ) : (
+              <>
+                <span className="sm:hidden truncate">
+                  Advance Station ➔
+                </span>
+                <span className="hidden sm:inline">
+                  Advance to {isFinalStep ? 'Final Release' : nextStep?.name || 'Next Station'}
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 stroke-[2.5] shrink-0 hidden sm:inline" />
+              </>
+            )}
+          </button>
+        </div>
         </form>
       </div>
     </div>
