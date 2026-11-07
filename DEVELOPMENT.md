@@ -1,4 +1,4 @@
-# MetiTrack — AI Agent & Developer Guidelines (`AGENTS.md`)
+# MetiTrack — Contributor & Engineering Development Guidelines (`DEVELOPMENT.md`)
 
 ## 1. Project Overview & Context
 - **Project Name:** MetiTrack (Meticuly Manufacturing Process & Resource Tracking System)
@@ -16,7 +16,7 @@
 ---
 
 ## 3. The Living Documentation Protocol (Mandatory)
-Every AI agent and human engineer working on this codebase **MUST** follow this protocol:
+Every engineer and contributor working on this codebase **MUST** follow this protocol:
 
 1. **Before writing code:**
    - Check `docs/PROGRESS.md` to see the current active milestone and task.
@@ -34,7 +34,7 @@ Every AI agent and human engineer working on this codebase **MUST** follow this 
 ## 4. Directory Structure
 ```text
 meticuly/
-├── AGENTS.md                  # This rulebook
+├── DEVELOPMENT.md             # Contributor & engineering rulebook
 ├── README.md                  # Setup and execution guide for reviewers
 ├── docker-compose.yml         # 1-command local deployment
 ├── docs/

@@ -3,16 +3,24 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.sqlite3
+.pytest_cache/
+backend/.pytest_cache/
+*.cache
 backend/.venv/
 .venv/
 env/
 venv/
 *.log
+.env
+.env.local
+backend/.env
+frontend/.env.local
 
 # Node / Next.js
 frontend/node_modules/
 frontend/.next/
 frontend/out/
+frontend/AGENTS.md
 node_modules/
 .next/
 
