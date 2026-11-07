@@ -74,6 +74,13 @@ export function setStoredRole(role: RoleKey): void {
   }
 }
 
+export function isAuthenticated(): boolean {
+  if (typeof window === 'undefined') return false;
+  return !!localStorage.getItem(ACCESS_TOKEN_KEY);
+}
+
+let isRetryingAuth = false;
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE_URL}${path}`;
   const headers = new Headers(options.headers || {});
@@ -93,11 +100,40 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     headers.set('X-Operator-Role', getStoredRole());
   }
 
-  const response = await fetch(url, {
+  let response = await fetch(url, {
     ...options,
     headers,
     credentials: 'include',
   });
+
+  // Automatic Session Recovery: If 401 Unauthorized occurs on protected operations,
+  // transparently re-authenticate with current role credentials and retry once
+  if (response.status === 401 && !path.includes('/auth/') && !isRetryingAuth) {
+    isRetryingAuth = true;
+    try {
+      const activeRole = getStoredRole();
+      const roleUsernameMap: Record<RoleKey, string> = {
+        ADMIN: 'admin',
+        BIOMEDICAL_ENGINEER: 'biomed_lead',
+        PRODUCTION_OPERATOR: 'slm_tech',
+        QA_SPECIALIST: 'qa_lead',
+      };
+      const username = roleUsernameMap[activeRole] || 'admin';
+      const loginRes = await api.quickSwitchOperator(username);
+      if (loginRes?.access) {
+        headers.set('Authorization', `Bearer ${loginRes.access}`);
+        response = await fetch(url, {
+          ...options,
+          headers,
+          credentials: 'include',
+        });
+      }
+    } catch {
+      // Fall through to standard error handling
+    } finally {
+      isRetryingAuth = false;
+    }
+  }
 
   if (!response.ok) {
     let errorDetail = `HTTP ${response.status}: ${response.statusText}`;
@@ -307,4 +343,6 @@ export const api = {
     const query = searchParams.toString();
     return request<OrderStepLog[]>(`/audit-logs/${query ? `?${query}` : ''}`);
   },
+
+  isAuthenticated,
 };

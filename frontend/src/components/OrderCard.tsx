@@ -138,6 +138,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
           </div>
         ) : (
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onAdvance(order);

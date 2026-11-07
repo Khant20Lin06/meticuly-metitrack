@@ -659,6 +659,7 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
 
           {!isCompleted ? (
             <button
+              type="button"
               onClick={() => {
                 onAdvanceClick(order);
               }}

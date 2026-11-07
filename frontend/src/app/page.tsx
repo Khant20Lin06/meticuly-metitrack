@@ -44,7 +44,10 @@ export default function MetiTrackDashboard() {
     const initSessionAndLoad = async () => {
       const role = getStoredRole();
       setActiveRole(role);
-      await handleRoleChange(role);
+      // Only request new token if no stored token exists to avoid redundant rate limit consumption
+      if (!api.isAuthenticated()) {
+        await handleRoleChange(role);
+      }
       await loadAllData();
     };
     initSessionAndLoad();

@@ -278,7 +278,7 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
           operator_name: operatorName,
           notes: notes,
           resources: selectedResources,
-          expected_step_sequence: order.current_step.sequence_order,
+          expected_step_sequence: order.current_step?.sequence_order,
         },
         activeRole
       );
