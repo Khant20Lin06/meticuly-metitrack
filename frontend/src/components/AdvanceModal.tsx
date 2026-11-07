@@ -296,34 +296,34 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="w-full max-w-2xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl shadow-black/80 overflow-hidden flex flex-col my-8">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4 overflow-hidden">
+      <div className="w-full sm:max-w-2xl bg-zinc-950 border border-zinc-800 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/80 overflow-hidden flex flex-col max-h-[92dvh] sm:max-h-[88vh] my-0 sm:my-8 animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
         {/* Header */}
-        <div className="px-5 py-3.5 border-b border-zinc-800/80 bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="font-mono text-sm font-bold text-white tracking-wide">
-              Advance Case: <span className="text-sky-400">{order.case_id}</span>
+        <div className="px-4 sm:px-5 py-3 border-b border-zinc-800/80 bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="font-mono text-xs sm:text-sm font-bold text-white tracking-wide truncate">
+              Advance: <span className="text-sky-400">{order.case_id}</span>
             </span>
-            <span className="text-zinc-600">•</span>
-            <span className="text-xs text-zinc-300 font-mono bg-zinc-800/80 px-2 py-0.5 rounded border border-zinc-700/60">
+            <span className="text-zinc-600 hidden sm:inline">•</span>
+            <span className="text-[10px] sm:text-xs text-zinc-300 font-mono bg-zinc-800/80 px-2 py-0.5 rounded border border-zinc-700/60 truncate">
               {order.patient_ref}
             </span>
-            <span className="text-xs font-medium text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/40">
+            <span className="text-[10px] sm:text-xs font-medium text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/40 truncate hidden sm:inline-block">
               {order.implant_type_display}
             </span>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0 ml-2"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* 5-Station Visual Stepper Pipeline Header */}
-        <div className="px-5 py-3 bg-zinc-900/40 border-b border-zinc-800/80">
-          <div className="flex items-center justify-between gap-1">
+        <div className="px-3 sm:px-5 py-2.5 bg-zinc-900/40 border-b border-zinc-800/80 shrink-0 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-1 min-w-[380px] sm:min-w-0 sm:justify-between">
             {[1, 2, 3, 4, 5].map((seq) => {
               const isPast = seq < currentSeq;
               const isCurrent = seq === currentSeq;
@@ -337,7 +337,7 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
 
               return (
                 <div key={seq} className="flex-1 flex items-center">
-                  <div className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border text-[10px] w-full justify-center ${badgeClass}`}>
+                  <div className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border text-[10px] w-full justify-center shrink-0 ${badgeClass}`}>
                     <span className="font-mono font-bold">{seq}</span>
                     <span className="truncate">{shortName}</span>
                     {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />}
@@ -350,8 +350,9 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
           </div>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4 text-xs">
+        {/* Form Body - Scrollable Container */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col justify-between">
+          <div className="p-4 sm:p-5 space-y-3.5 sm:space-y-4 text-xs">
           {/* Error Message Alert */}
           {errorMessage && (
             <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-800/80 text-rose-200 flex items-start gap-2.5">
@@ -575,31 +576,32 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Modal Footer Actions */}
-          <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between">
-            <div className="text-[11px] text-zinc-500">
-              Station {currentSeq} ➔ Station {isFinalStep ? 'Final Release' : nextSeq}
+        {/* Sticky Modal Footer Actions */}
+          <div className="p-3 sm:p-4 bg-zinc-900/95 border-t border-zinc-800/90 shrink-0 sticky bottom-0 z-20 backdrop-blur flex items-center justify-between gap-2 select-none">
+            <div className="text-[11px] text-zinc-400 truncate max-w-[120px] sm:max-w-none">
+              Step {currentSeq} ➔ {isFinalStep ? 'Release' : `Step ${nextSeq}`}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 rounded-lg font-medium transition border border-zinc-800"
+                className="px-3.5 sm:px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg font-medium transition border border-zinc-700 text-xs active:scale-95"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || hasStockError}
-                className="px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-lg font-semibold shadow-md shadow-sky-950/60 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 sm:px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-lg font-bold shadow-md shadow-sky-950/60 transition flex items-center gap-1.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Advancing Station...</span>
+                    <span>Advancing...</span>
                   </>
                 ) : (
                   <>

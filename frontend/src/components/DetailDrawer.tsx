@@ -652,8 +652,8 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
         </div>
 
         {/* Drawer Footer Action */}
-        <div className="p-4 border-t border-zinc-800/80 bg-zinc-900/60 flex items-center justify-between">
-          <div className="text-xs text-zinc-400">
+        <div className="p-3.5 sm:p-4 border-t border-zinc-800/80 bg-zinc-900/95 backdrop-blur shrink-0 sticky bottom-0 z-20 flex items-center justify-between select-none">
+          <div className="text-xs text-zinc-400 truncate max-w-[180px]">
             Station: <span className="font-semibold text-zinc-200">{order.current_step?.name}</span>
           </div>
 
@@ -663,12 +663,12 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
               onClick={() => {
                 onAdvanceClick(order);
               }}
-              className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5"
+              className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1.5 active:scale-95 shrink-0"
             >
               <span>Advance Station ➔</span>
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
+            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold shrink-0">
               <CheckCircle2 className="w-4 h-4" />
               <span>Released & Sterile</span>
             </div>

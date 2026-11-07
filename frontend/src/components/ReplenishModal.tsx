@@ -47,13 +47,13 @@ export const ReplenishModal: React.FC<ReplenishModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4 overflow-hidden">
+      <div className="w-full sm:max-w-md bg-zinc-950 border border-zinc-800 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] sm:max-h-[88vh] my-0 sm:my-8 animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-4 border-b border-zinc-800 bg-zinc-900/60 flex items-center justify-between">
+        <div className="p-3.5 sm:p-4 border-b border-zinc-800 bg-zinc-900/80 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
             <Boxes className="w-4 h-4 text-sky-400" />
-            <h3 className="font-semibold text-zinc-100 text-sm">
+            <h3 className="font-semibold text-zinc-100 text-xs sm:text-sm">
               Warehouse Stock Replenishment
             </h3>
           </div>
@@ -67,7 +67,8 @@ export const ReplenishModal: React.FC<ReplenishModalProps> = ({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col justify-between">
+          <div className="p-4 sm:p-5 space-y-4 text-xs">
           {errorMessage && (
             <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-800/80 text-rose-200 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
@@ -130,30 +131,32 @@ export const ReplenishModal: React.FC<ReplenishModalProps> = ({
             </strong>
           </div>
 
-          {/* Actions */}
-          <div className="pt-2 flex items-center justify-end gap-3">
+          </div>
+
+          {/* Actions - Sticky Footer */}
+          <div className="p-3 sm:p-4 border-t border-zinc-800 bg-zinc-900/95 sticky bottom-0 z-20 backdrop-blur shrink-0 flex items-center justify-end gap-2.5 sm:gap-3 select-none">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 rounded-lg font-medium transition"
+              className="px-3.5 sm:px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg font-medium transition text-xs active:scale-95 border border-zinc-700/80"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold shadow-sm transition flex items-center gap-2 disabled:opacity-50"
+              className="px-4 sm:px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold shadow-sm transition flex items-center gap-1.5 text-xs disabled:opacity-50 active:scale-95"
             >
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Updating Stock...</span>
+                  <span>Updating...</span>
                 </>
               ) : (
                 <>
                   <PlusCircle className="w-3.5 h-3.5" />
-                  <span>Confirm Replenishment</span>
+                  <span>Confirm Replenish</span>
                 </>
               )}
             </button>
