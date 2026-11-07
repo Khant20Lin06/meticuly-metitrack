@@ -30,6 +30,17 @@ export const PipelineBoard: React.FC<PipelineBoardProps> = ({
   const [showCompletedColumn, setShowCompletedColumn] = useState(true);
   const [selectedMobileStation, setSelectedMobileStation] = useState<number | 'ALL' | 'COMPLETED'>('ALL');
 
+  const getStationShortLabel = (seq: number, fallback: string) => {
+    switch (seq) {
+      case 1: return 'CAD';
+      case 2: return 'SLM Print';
+      case 3: return 'CNC / Mill';
+      case 4: return 'QA Sterile';
+      case 5: return 'Packaging';
+      default: return fallback;
+    }
+  };
+
   // Station Authorization Mapping for ISO 13485 Station RBAC
   const stepRequiredRoles: Record<number, { role: string; label: string; badgeColor: string }> = {
     1: {
@@ -125,7 +136,7 @@ export const PipelineBoard: React.FC<PipelineBoardProps> = ({
             }`}
           >
             <span className="font-mono text-[10px]">{st.sequence_order}.</span>
-            <span>{st.name.split(' ')[0]}</span>
+            <span>{getStationShortLabel(st.sequence_order, st.name.split(' ')[0])}</span>
           </button>
         ))}
         {showCompletedColumn && (

@@ -87,7 +87,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
           </span>
         </div>
 
-        {/* Step Progress (ဥပမာ- Step 2 of 5) & 5-Segment Bar */}
+        {/* Step Progress (e.g. Step 2 of 5) & 5-Segment Bar */}
         <div className="flex flex-col gap-1 w-full pt-0.5">
           <div className="flex items-center justify-between text-[11px]">
             <span className="text-zinc-300 font-medium text-[11px]">

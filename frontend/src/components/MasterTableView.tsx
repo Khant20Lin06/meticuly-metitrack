@@ -314,51 +314,51 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
   };
 
   return (
-    <div className="flex-1 p-6 bg-zinc-950 flex flex-col gap-4 overflow-y-auto min-w-0">
+    <div className="flex-1 p-3 sm:p-6 bg-zinc-950 flex flex-col gap-3 sm:gap-4 overflow-y-auto min-w-0">
       {/* 1. TOP HEADER & TELEMETRY STRIP */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-zinc-100 tracking-tight">
-              Master Manufacturing Ledger (စာရင်းဇယားဖြင့် အပြည့်အစုံ ကြည့်ရှုမှု)
+            <h2 className="text-sm sm:text-base font-bold text-zinc-100 tracking-tight">
+              Master Manufacturing Ledger
             </h2>
             <span className="flex h-2 w-2 rounded-full bg-sky-400 animate-pulse" />
           </div>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
             ISO 13485 audit queue, case prioritization, station progression, and cumulative cost ledger
           </p>
         </div>
 
         {/* Quick KPI Strip */}
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center gap-2 text-xs">
-            <span className="text-zinc-500 font-medium">Total:</span>
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          <div className="px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center gap-1.5 text-xs shrink-0">
+            <span className="text-zinc-500 font-medium text-[11px]">Total:</span>
             <span className="font-mono font-bold text-zinc-200">{metrics.total}</span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-lg bg-sky-950/40 border border-sky-800/60 flex items-center gap-2 text-xs">
-            <Activity className="w-3.5 h-3.5 text-sky-400" />
-            <span className="text-sky-300 font-medium">Active WIP:</span>
+          <div className="px-2.5 py-1 rounded-lg bg-sky-950/40 border border-sky-800/60 flex items-center gap-1.5 text-xs shrink-0">
+            <Activity className="w-3 h-3 text-sky-400" />
+            <span className="text-sky-300 font-medium text-[11px]">WIP:</span>
             <span className="font-mono font-bold text-sky-200">{metrics.wip}</span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-lg bg-rose-950/40 border border-rose-800/60 flex items-center gap-2 text-xs">
-            <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
-            <span className="text-rose-300 font-medium">Urgent:</span>
+          <div className="px-2.5 py-1 rounded-lg bg-rose-950/40 border border-rose-800/60 flex items-center gap-1.5 text-xs shrink-0">
+            <AlertTriangle className="w-3 h-3 text-rose-400" />
+            <span className="text-rose-300 font-medium text-[11px]">Urgent:</span>
             <span className="font-mono font-bold text-rose-200">{metrics.urgent}</span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-800/60 flex items-center gap-2 text-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-emerald-300 font-medium">Released eDHR:</span>
+          <div className="px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-800/60 flex items-center gap-1.5 text-xs shrink-0">
+            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+            <span className="text-emerald-300 font-medium text-[11px]">eDHR:</span>
             <span className="font-mono font-bold text-emerald-200">{metrics.completed}</span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center gap-2 text-xs">
-            <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-zinc-400 font-medium">Ledger Total:</span>
+          <div className="px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center gap-1.5 text-xs shrink-0">
+            <DollarSign className="w-3 h-3 text-emerald-400" />
+            <span className="text-zinc-400 font-medium text-[11px]">Ledger:</span>
             <span className="font-mono font-bold text-emerald-400">
-              ${metrics.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              ${metrics.totalCost.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             </span>
           </div>
         </div>

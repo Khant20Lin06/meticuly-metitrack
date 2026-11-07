@@ -144,7 +144,7 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-bold text-zinc-100 text-sm tracking-tight">
-                  Patient Case Intake & Triage (အော်ဒါလက်ခံခြင်း)
+                  Patient Case Intake & Triage
                 </h3>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-950 border border-sky-800 text-sky-300 font-mono">
                   ISO 13485:2016
@@ -309,7 +309,7 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           {/* SECTION 3: SURGICAL URGENCY & TRIAGE PRIORITY */}
           <div className="space-y-2">
             <label className="text-zinc-300 font-semibold flex items-center justify-between">
-              <span>အရေးပေါ်အဆင့် သတ်မှတ်ခြင်း (Surgical Urgency Triage)</span>
+              <span>Surgical Urgency & SLA Priority</span>
               <span className="text-[10px] font-mono text-zinc-400">Additive SLA Priority</span>
             </label>
 

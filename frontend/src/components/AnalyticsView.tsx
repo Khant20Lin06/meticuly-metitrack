@@ -35,7 +35,11 @@ import { PlantAnalytics, Resource, PlantStockHealth, StepDistributionItem } from
 import { api } from '../lib/api';
 import { ReplenishModal } from './ReplenishModal';
 
-export const AnalyticsView: React.FC = () => {
+interface AnalyticsViewProps {
+  activeSubTab?: 'telemetry' | 'inventory';
+}
+
+export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ activeSubTab = 'telemetry' }) => {
   const [analytics, setAnalytics] = useState<PlantAnalytics | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
   const [stockHealth, setStockHealth] = useState<PlantStockHealth | null>(null);
@@ -175,18 +179,22 @@ export const AnalyticsView: React.FC = () => {
   ];
 
   return (
-    <div className="flex-1 p-6 bg-zinc-950 flex flex-col gap-6 overflow-y-auto">
+    <div className="flex-1 p-3 sm:p-6 bg-zinc-950 flex flex-col gap-4 sm:gap-6 overflow-y-auto">
       {/* Top Header & Telemetry Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-zinc-100 tracking-tight">
-              Factory Telemetry & Bottleneck Dashboard
+              {activeSubTab === 'inventory'
+                ? 'Warehouse Inventory & Raw Material Stocks'
+                : 'Factory Telemetry & Bottleneck Dashboard'}
             </h2>
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
           </div>
           <p className="text-xs text-zinc-400 mt-0.5">
-            Real-time shop floor load analysis, bottleneck detection, and cumulative titanium powder consumption
+            {activeSubTab === 'inventory'
+              ? 'ASTM F3001 Grade 23 titanium powder balances, cleanroom safety thresholds, and one-click replenishment'
+              : 'Real-time shop floor load analysis, bottleneck detection, and cumulative titanium powder consumption'}
           </p>
         </div>
 
@@ -196,47 +204,49 @@ export const AnalyticsView: React.FC = () => {
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-xs font-semibold transition disabled:opacity-50 self-start sm:self-auto shadow-sm"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-sky-400' : ''}`} />
-          <span>Refresh Telemetry</span>
+          <span>Refresh {activeSubTab === 'inventory' ? 'Inventory' : 'Telemetry'}</span>
         </button>
       </div>
 
       {/* BOTTLENECK DETECTION ALERT BANNER */}
-      {bottleneckStation && maxStationWip > 0 ? (
-        <div className="p-4 rounded-xl bg-gradient-to-r from-rose-950/80 via-rose-900/40 to-zinc-900 border border-rose-800/80 text-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-start sm:items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-rose-900/80 border border-rose-700 flex items-center justify-center shrink-0 text-rose-300">
-              <AlertTriangle className="w-5 h-5 animate-pulse" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-xs uppercase tracking-wider text-rose-300 font-mono">
-                  ⚠️ Shop Floor Bottleneck Detected
-                </span>
-                <span className="px-2 py-0.5 rounded bg-rose-900/90 text-rose-100 font-mono text-[10px] font-bold">
-                  {bottleneckStation.order_count} Cases Queued
-                </span>
+      {activeSubTab === 'telemetry' && (
+        bottleneckStation && maxStationWip > 0 ? (
+          <div className="p-4 rounded-xl bg-gradient-to-r from-rose-950/80 via-rose-900/40 to-zinc-900 border border-rose-800/80 text-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-rose-900/80 border border-rose-700 flex items-center justify-center shrink-0 text-rose-300">
+                <AlertTriangle className="w-5 h-5 animate-pulse" />
               </div>
-              <p className="text-xs text-rose-200/90 mt-0.5 leading-relaxed">
-                Cases are currently accumulating at{' '}
-                <strong className="text-white">
-                  Step {bottleneckStation.sequence_order}: {bottleneckStation.name}
-                </strong>
-                . Dispatch additional certified operators or allocate machine capacity to prevent surgical lead-time delays.
-              </p>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-xs uppercase tracking-wider text-rose-300 font-mono">
+                    ⚠️ Shop Floor Bottleneck Detected
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-rose-900/90 text-rose-100 font-mono text-[10px] font-bold">
+                    {bottleneckStation.order_count} Cases Queued
+                  </span>
+                </div>
+                <p className="text-xs text-rose-200/90 mt-0.5 leading-relaxed">
+                  Cases are currently accumulating at{' '}
+                  <strong className="text-white">
+                    Step {bottleneckStation.sequence_order}: {bottleneckStation.name}
+                  </strong>
+                  . Dispatch additional certified operators or allocate machine capacity to prevent surgical lead-time delays.
+                </p>
+              </div>
             </div>
-          </div>
 
-          <span className="text-[10px] font-mono text-rose-300/80 border border-rose-800/60 px-2.5 py-1 rounded-lg self-start sm:self-auto whitespace-nowrap bg-rose-950/40">
-            Station: {bottleneckStation.code}
-          </span>
-        </div>
-      ) : (
-        <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 text-zinc-300 text-xs flex items-center gap-2.5">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>
-            <strong>Optimal Line Flow:</strong> Manufacturing floor is balanced with no bottleneck congestion across the 5 stations.
-          </span>
-        </div>
+            <span className="text-[10px] font-mono text-rose-300/80 border border-rose-800/60 px-2.5 py-1 rounded-lg self-start sm:self-auto whitespace-nowrap bg-rose-950/40">
+              Station: {bottleneckStation.code}
+            </span>
+          </div>
+        ) : (
+          <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 text-zinc-300 text-xs flex items-center gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>
+              <strong>Optimal Line Flow:</strong> Manufacturing floor is balanced with no bottleneck congestion across the 5 stations.
+            </span>
+          </div>
+        )
       )}
 
       {/* TOP 4 KEY TELEMETRY METRICS */}
@@ -530,7 +540,7 @@ export const AnalyticsView: React.FC = () => {
           <div className="flex items-center gap-2">
             <Boxes className="w-4 h-4 text-sky-400" />
             <h3 className="text-xs font-bold text-zinc-100">
-              Warehouse Stock Balances & Safety Levels (ကုန်ကြမ်းလက်ကျန် စာရင်း)
+              Warehouse Stock Balances & Safety Levels
             </h3>
           </div>
           <span className="text-[10px] text-zinc-400 font-mono">

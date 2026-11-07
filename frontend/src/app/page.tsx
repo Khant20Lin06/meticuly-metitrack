@@ -175,6 +175,7 @@ export default function MetiTrackDashboard() {
       <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden pb-16 md:pb-0">
         {/* Top Header Bar */}
         <TopBar
+          activeView={activeView}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           selectedPriority={selectedPriority}
@@ -210,8 +211,12 @@ export default function MetiTrackDashboard() {
             />
           )}
 
-          {(activeView === 'analytics' || activeView === 'inventory') && (
-            <AnalyticsView />
+          {activeView === 'analytics' && (
+            <AnalyticsView activeSubTab="telemetry" />
+          )}
+
+          {activeView === 'inventory' && (
+            <AnalyticsView activeSubTab="inventory" />
           )}
 
           {activeView === 'security' && (
