@@ -132,7 +132,7 @@ export const SecurityAuditView: React.FC = () => {
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="text-2xl font-bold text-emerald-400">{dhrSignedCount}</div>
-          <div className="text-[10px] text-emerald-300/70">HMAC-SHA256 Certified</div>
+          <div className="text-[10px] text-emerald-300/70">ECDSA-SHA256 Certified</div>
         </div>
       </div>
 

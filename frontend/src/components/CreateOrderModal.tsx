@@ -200,9 +200,9 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
               <label className="text-zinc-300 font-semibold flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>HIPAA Masked ID</span>
+                  <span>Patient Clinical Identifier</span>
                 </span>
-                <span className="text-[10px] text-emerald-400/90 font-mono">Zero PII Stored</span>
+                <span className="text-[10px] text-emerald-400/90 font-mono">De-Identified HIPAA Compliant</span>
               </label>
 
               <div className="flex items-center gap-2">
@@ -251,7 +251,7 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
             <div className="flex items-center justify-between">
               <label className="text-zinc-300 font-semibold flex items-center gap-1.5">
                 <Bone className="w-3.5 h-3.5 text-sky-400" />
-                <span>အစားထိုးအရိုးဒီဇိုင်း ရွေးချယ်ခြင်း (Anatomical Geometry)</span>
+                <span>Patient Anatomical Implant Geometry</span>
               </label>
               <span className="text-[10px] text-zinc-400 font-mono">
                 ASTM F3001 Grade 23 ELI

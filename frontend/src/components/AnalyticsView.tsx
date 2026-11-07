@@ -181,7 +181,7 @@ export const AnalyticsView: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-zinc-100 tracking-tight">
-              Factory Telemetry & Bottleneck Dashboard (စက်ရုံ လည်ပတ်မှု မက်ထရစ်)
+              Factory Telemetry & Bottleneck Dashboard
             </h2>
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
           </div>
@@ -210,7 +210,7 @@ export const AnalyticsView: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-xs uppercase tracking-wider text-rose-300 font-mono">
-                  ⚠️ Shop Floor Bottleneck Detected (အလုပ်ပိတ်ဆို့နေသော အဆင့်)
+                  ⚠️ Shop Floor Bottleneck Detected
                 </span>
                 <span className="px-2 py-0.5 rounded bg-rose-900/90 text-rose-100 font-mono text-[10px] font-bold">
                   {bottleneckStation.order_count} Cases Queued
@@ -455,7 +455,7 @@ export const AnalyticsView: React.FC = () => {
             </div>
             <div>
               <h3 className="text-xs font-bold text-zinc-100">
-                Titanium Ti-6Al-4V ELI Powder Tracking (စုစုပေါင်း Titanium သုံးစွဲမှုနှင့် လက်ကျန်)
+                Titanium Ti-6Al-4V ELI Powder Tracking
               </h3>
               <p className="text-[11px] text-zinc-400">
                 ASTM F3001 Grade 23 Virgin vs Sieve Recycled Powder Batch Balance

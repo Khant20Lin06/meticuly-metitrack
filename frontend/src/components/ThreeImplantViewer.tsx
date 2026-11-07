@@ -164,10 +164,40 @@ export const ThreeImplantViewer: React.FC<ThreeImplantViewerProps> = ({ implantT
       e.preventDefault(); // Prevent default browser context menu on right click pan
     };
 
+    // Mobile / Cleanroom Tablet Touch Controls
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        isDragging.current = true;
+        previousMousePosition.current = {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        };
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isDragging.current || !meshGroupRef.current || e.touches.length !== 1) return;
+      const deltaX = e.touches[0].clientX - previousMousePosition.current.x;
+      const deltaY = e.touches[0].clientY - previousMousePosition.current.y;
+      meshGroupRef.current.rotation.y += deltaX * 0.01;
+      meshGroupRef.current.rotation.x += deltaY * 0.01;
+      previousMousePosition.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+      };
+    };
+
+    const onTouchEnd = () => {
+      isDragging.current = false;
+    };
+
     const domElement = renderer.domElement;
     domElement.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
+    domElement.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd);
     domElement.addEventListener('wheel', onWheel, { passive: false });
     domElement.addEventListener('contextmenu', onContextMenu);
 
@@ -200,6 +230,9 @@ export const ThreeImplantViewer: React.FC<ThreeImplantViewerProps> = ({ implantT
       domElement.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
+      domElement.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
       domElement.removeEventListener('wheel', onWheel);
       domElement.removeEventListener('contextmenu', onContextMenu);
       renderer.dispose();

@@ -358,7 +358,7 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
               <div className="space-y-1">
                 <span className="font-bold block text-rose-300">
-                  Domain Verification Rejection
+                  Station Sign-Off Notice
                 </span>
                 <p className="text-[11px] leading-relaxed font-mono">{errorMessage}</p>
               </div>

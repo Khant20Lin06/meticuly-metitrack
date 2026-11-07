@@ -547,7 +547,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
             <thead className="bg-zinc-900/95 border-b border-zinc-800 text-[11px] text-zinc-400 font-semibold uppercase tracking-wider select-none sticky top-0 z-10 backdrop-blur-md">
               <tr>
                 {/* Bulk Select Checkbox */}
-                <th className="py-3 px-3.5 w-10 text-center">
+                <th className="py-3 px-3.5 w-10 text-center hidden sm:table-cell">
                   <button
                     onClick={handleToggleSelectAllPage}
                     className="text-zinc-400 hover:text-zinc-200 transition focus:outline-none"
@@ -577,7 +577,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                 {/* Patient Ref */}
                 <th
                   onClick={() => handleSort('patient_ref')}
-                  className="py-3 px-3 cursor-pointer group hover:text-white transition"
+                  className="py-3 px-3 cursor-pointer group hover:text-white transition hidden md:table-cell"
                 >
                   <div className="flex items-center gap-1.5">
                     <span>Patient Reference</span>
@@ -599,7 +599,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                 {/* Priority */}
                 <th
                   onClick={() => handleSort('priority')}
-                  className="py-3 px-3 cursor-pointer group hover:text-white transition"
+                  className="py-3 px-3 cursor-pointer group hover:text-white transition hidden lg:table-cell"
                 >
                   <div className="flex items-center gap-1.5">
                     <span>Priority</span>
@@ -610,7 +610,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                 {/* Current Station & Pipeline */}
                 <th
                   onClick={() => handleSort('current_step')}
-                  className="py-3 px-3 cursor-pointer group hover:text-white transition min-w-[200px]"
+                  className="py-3 px-3 cursor-pointer group hover:text-white transition min-w-[150px] sm:min-w-[200px]"
                 >
                   <div className="flex items-center gap-1.5">
                     <span>Current Station & Progress</span>
@@ -621,7 +621,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                 {/* Status */}
                 <th
                   onClick={() => handleSort('status')}
-                  className="py-3 px-3 cursor-pointer group hover:text-white transition"
+                  className="py-3 px-3 cursor-pointer group hover:text-white transition hidden sm:table-cell"
                 >
                   <div className="flex items-center gap-1.5">
                     <span>ISO 13485 Status</span>
@@ -632,7 +632,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                 {/* Accumulated Cost */}
                 <th
                   onClick={() => handleSort('total_cost')}
-                  className="py-3 px-3 text-right cursor-pointer group hover:text-white transition"
+                  className="py-3 px-3 text-right cursor-pointer group hover:text-white transition hidden xl:table-cell"
                 >
                   <div className="flex items-center justify-end gap-1.5">
                     <span>Total Cost</span>
@@ -696,7 +696,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                     >
                       {/* Checkbox */}
                       <td
-                        className="py-3 px-3.5 text-center"
+                        className="py-3 px-3.5 text-center hidden sm:table-cell"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleToggleRow(order.id);
@@ -728,7 +728,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                       </td>
 
                       {/* Patient Reference */}
-                      <td className="py-3 px-3 font-mono text-zinc-400 whitespace-nowrap">
+                      <td className="py-3 px-3 font-mono text-zinc-400 whitespace-nowrap hidden md:table-cell">
                         {order.patient_ref}
                       </td>
 
@@ -742,7 +742,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                       </td>
 
                       {/* Priority */}
-                      <td className="py-3 px-3 whitespace-nowrap">
+                      <td className="py-3 px-3 whitespace-nowrap hidden lg:table-cell">
                         {isUrgent ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-950/90 text-rose-300 border border-rose-800 animate-pulse">
                             <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
@@ -788,7 +788,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                       </td>
 
                       {/* Status */}
-                      <td className="py-3 px-3 whitespace-nowrap">
+                      <td className="py-3 px-3 whitespace-nowrap hidden sm:table-cell">
                         {isCompleted ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-800/80">
                             <CheckCircle2 className="w-3 h-3 text-emerald-400" />
@@ -803,7 +803,7 @@ export const MasterTableView: React.FC<MasterTableViewProps> = ({
                       </td>
 
                       {/* Accumulated Cost */}
-                      <td className="py-3 px-3 text-right font-mono font-bold text-zinc-100 whitespace-nowrap">
+                      <td className="py-3 px-3 text-right font-mono font-bold text-zinc-100 whitespace-nowrap hidden xl:table-cell">
                         ${Number(order.total_cost || 0).toLocaleString('en-US', {
                           minimumFractionDigits: 2,
                         })}

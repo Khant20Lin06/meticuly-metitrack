@@ -28,6 +28,7 @@ export const PipelineBoard: React.FC<PipelineBoardProps> = ({
   onAdvanceOrder,
 }) => {
   const [showCompletedColumn, setShowCompletedColumn] = useState(true);
+  const [selectedMobileStation, setSelectedMobileStation] = useState<number | 'ALL' | 'COMPLETED'>('ALL');
 
   // Station Authorization Mapping for ISO 13485 Station RBAC
   const stepRequiredRoles: Record<number, { role: string; label: string; badgeColor: string }> = {
@@ -73,19 +74,17 @@ export const PipelineBoard: React.FC<PipelineBoardProps> = ({
 
   return (
     <div className="flex-1 flex flex-col bg-zinc-950 overflow-hidden">
-      {/* Board Secondary Utility Ribbon */}
-      <div className="h-10 border-b border-zinc-800/60 bg-zinc-900/30 px-6 flex items-center justify-between text-xs text-zinc-400 select-none">
-        <div className="flex items-center gap-3">
-          <span className="font-semibold text-zinc-200">Manufacturing Floor</span>
-          <span className="text-zinc-600">•</span>
-          <span>
-            Active Work-In-Progress (WIP):{' '}
-            <strong className="text-sky-400 font-mono">{activeWipOrders.length} cases</strong>
+      {/* Board Utility Ribbon (Responsive) */}
+      <div className="border-b border-zinc-800/60 bg-zinc-900/30 px-3 sm:px-6 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-zinc-400 select-none">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <span className="font-semibold text-zinc-200">Floor Flow</span>
+          <span className="text-zinc-600 hidden sm:inline">•</span>
+          <span className="text-[11px] sm:text-xs">
+            WIP: <strong className="text-sky-400 font-mono">{activeWipOrders.length} cases</strong>
           </span>
           <span className="text-zinc-600">•</span>
-          <span>
-            eDHR Released:{' '}
-            <strong className="text-emerald-400 font-mono">{completedOrders.length} implants</strong>
+          <span className="text-[11px] sm:text-xs">
+            Released: <strong className="text-emerald-400 font-mono">{completedOrders.length} implants</strong>
           </span>
         </div>
 
@@ -103,11 +102,55 @@ export const PipelineBoard: React.FC<PipelineBoardProps> = ({
         </div>
       </div>
 
+      {/* Mobile Station Quick Jump Tabs (< md) */}
+      <div className="flex md:hidden items-center gap-1.5 px-3 py-2 bg-zinc-950 border-b border-zinc-800/80 overflow-x-auto scrollbar-none select-none">
+        <button
+          onClick={() => setSelectedMobileStation('ALL')}
+          className={`px-2.5 py-1 rounded-lg text-[11px] font-medium shrink-0 transition ${
+            selectedMobileStation === 'ALL'
+              ? 'bg-sky-600 text-white shadow-sm'
+              : 'bg-zinc-900 text-zinc-400 border border-zinc-800'
+          }`}
+        >
+          All Stations
+        </button>
+        {steps.map((st) => (
+          <button
+            key={st.id}
+            onClick={() => setSelectedMobileStation(st.sequence_order)}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-medium shrink-0 transition flex items-center gap-1 ${
+              selectedMobileStation === st.sequence_order
+                ? 'bg-sky-600 text-white shadow-sm font-bold'
+                : 'bg-zinc-900 text-zinc-400 border border-zinc-800'
+            }`}
+          >
+            <span className="font-mono text-[10px]">{st.sequence_order}.</span>
+            <span>{st.name.split(' ')[0]}</span>
+          </button>
+        ))}
+        {showCompletedColumn && (
+          <button
+            onClick={() => setSelectedMobileStation('COMPLETED')}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-medium shrink-0 transition flex items-center gap-1 ${
+              selectedMobileStation === 'COMPLETED'
+                ? 'bg-emerald-600 text-white font-bold'
+                : 'bg-zinc-900 text-zinc-400 border border-zinc-800'
+            }`}
+          >
+            <span>✓ Sealed</span>
+          </button>
+        )}
+      </div>
+
       {/* Horizontal Free-Scroll Container */}
-      <div className="flex-1 overflow-x-auto p-6 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-zinc-950">
+      <div className="flex-1 overflow-x-auto p-3 sm:p-6 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-zinc-950">
         <div className="flex items-start gap-4 min-w-max pb-4">
           {/* Render 5 Sequential Manufacturing Columns (w-80 = 320px Fixed Width) */}
           {steps.map((step) => {
+            // Mobile station filter check
+            if (selectedMobileStation !== 'ALL' && selectedMobileStation !== step.sequence_order) {
+              return null;
+            }
             const stepOrders = orders.filter(
               (o) => o.status === 'IN_PROGRESS' && o.current_step?.id === step.id
             );
@@ -180,7 +223,7 @@ export const PipelineBoard: React.FC<PipelineBoardProps> = ({
           })}
 
           {/* Optional 6th Column: Completed Implants & eDHR Released (w-80 = 320px) */}
-          {showCompletedColumn && (
+          {showCompletedColumn && (selectedMobileStation === 'ALL' || selectedMobileStation === 'COMPLETED') && (
             <div className="w-80 min-w-80 max-w-80 shrink-0 flex flex-col rounded-2xl border border-emerald-950/70 bg-emerald-950/10 shadow-xl overflow-hidden">
               <div className="p-3.5 border-b border-emerald-900/40 bg-emerald-950/30 flex items-center justify-between">
                 <div className="flex items-center gap-2">

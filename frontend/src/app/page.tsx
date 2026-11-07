@@ -171,8 +171,8 @@ export default function MetiTrackDashboard() {
         }
       />
 
-      {/* Main Content Viewport */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+      {/* Main Content Viewport with mobile bottom nav padding */}
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden pb-16 md:pb-0">
         {/* Top Header Bar */}
         <TopBar
           searchQuery={searchQuery}
