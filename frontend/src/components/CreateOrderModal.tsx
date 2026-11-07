@@ -165,24 +165,24 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col justify-between">
-          <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 text-xs">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col justify-between w-full max-w-full">
+          <div className="p-3.5 sm:p-6 space-y-3.5 sm:space-y-5 text-xs w-full max-w-full overflow-hidden">
           {/* Error Message Alert */}
           {errorMessage && (
-            <div className="p-3.5 rounded-xl bg-rose-950/90 border border-rose-800 text-rose-200 flex items-start gap-2.5">
+            <div className="p-3.5 rounded-xl bg-rose-950/90 border border-rose-800 text-rose-200 flex items-start gap-2.5 w-full">
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="font-bold block text-rose-300">Intake Validation Rejection</span>
-                <p className="font-mono text-[11px] mt-0.5">{errorMessage}</p>
+                <p className="font-mono text-[11px] mt-0.5 break-words">{errorMessage}</p>
               </div>
             </div>
           )}
 
           {/* SECTION 1: CASE ID & HIPAA MASKED PATIENT REFERENCE */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full">
             {/* Case Identifier */}
-            <div className="space-y-1.5">
-              <label className="text-zinc-300 font-semibold flex items-center justify-between">
+            <div className="space-y-1.5 min-w-0">
+              <label className="text-zinc-300 font-semibold flex flex-wrap items-center justify-between gap-1">
                 <span>Case Identifier (LOT Barcode)</span>
                 <span className="text-[10px] font-mono text-zinc-500">Unique Direct Part Mark</span>
               </label>
@@ -197,16 +197,16 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
             </div>
 
             {/* HIPAA Masked Patient Reference */}
-            <div className="space-y-1.5">
-              <label className="text-zinc-300 font-semibold flex items-center justify-between">
+            <div className="space-y-1.5 min-w-0">
+              <label className="text-zinc-300 font-semibold flex flex-wrap items-center justify-between gap-1">
                 <span className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   <span>Patient Clinical Identifier</span>
                 </span>
                 <span className="text-[10px] text-emerald-400/90 font-mono">De-Identified HIPAA Compliant</span>
               </label>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 w-full min-w-0">
                 {/* Region Prefix Selector */}
                 <select
                   value={regionCode}
@@ -215,7 +215,7 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
                     setRegionCode(r);
                     setPatientRef(generateHipaaHash(r));
                   }}
-                  className="bg-zinc-900 border border-zinc-800 rounded-xl px-2.5 py-2.5 text-zinc-300 font-mono text-xs focus:outline-none focus:border-sky-500 cursor-pointer"
+                  className="w-28 sm:w-auto shrink-0 bg-zinc-900 border border-zinc-800 rounded-xl px-2 py-2.5 text-zinc-300 font-mono text-[11px] sm:text-xs focus:outline-none focus:border-sky-500 cursor-pointer"
                   title="Hospital Region Hub"
                 >
                   <option value="BKK">BKK (Bangkok)</option>
@@ -231,14 +231,14 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
                   value={patientRef}
                   onChange={(e) => setPatientRef(e.target.value)}
                   placeholder="e.g. PT-BKK-4912"
-                  className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-zinc-100 font-mono text-xs focus:border-sky-500 focus:outline-none shadow-inner"
+                  className="flex-1 min-w-0 bg-zinc-900 border border-zinc-800 rounded-xl px-2.5 sm:px-3.5 py-2.5 text-zinc-100 font-mono text-xs focus:border-sky-500 focus:outline-none shadow-inner"
                 />
 
                 {/* Regenerate Random Hash Button */}
                 <button
                   type="button"
                   onClick={handleRegeneratePatientRef}
-                  className="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-zinc-400 hover:text-white transition"
+                  className="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-zinc-400 hover:text-white transition shrink-0"
                   title="Generate Fresh Random HIPAA Hash"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
@@ -248,10 +248,10 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           </div>
 
           {/* SECTION 2: ANATOMICAL DESIGN SELECTOR CARDS */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
+          <div className="space-y-2 w-full">
+            <div className="flex flex-wrap items-center justify-between gap-1">
               <label className="text-zinc-300 font-semibold flex items-center gap-1.5">
-                <Bone className="w-3.5 h-3.5 text-sky-400" />
+                <Bone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                 <span>Patient Anatomical Implant Geometry</span>
               </label>
               <span className="text-[10px] text-zinc-400 font-mono">
@@ -259,7 +259,7 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 w-full">
               {anatomyOptions.map((opt) => {
                 const Icon = opt.icon;
                 const isSelected = implantType === opt.id;
@@ -268,7 +268,7 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
                   <div
                     key={opt.id}
                     onClick={() => setImplantType(opt.id)}
-                    className={`relative p-3.5 rounded-xl border transition-all cursor-pointer flex items-start gap-3 select-none ${
+                    className={`relative p-3 sm:p-3.5 rounded-xl border transition-all cursor-pointer flex items-start gap-2.5 sm:gap-3 select-none w-full min-w-0 ${
                       isSelected
                         ? `${opt.accent} shadow-md shadow-sky-950/30 ring-1 ring-sky-500/50`
                         : 'border-zinc-800/80 bg-zinc-900/40 hover:bg-zinc-900/80 hover:border-zinc-700 text-zinc-400'
@@ -282,23 +282,23 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
                       <Icon className={`w-4 h-4 ${isSelected ? 'text-sky-400' : 'text-zinc-500'}`} />
                     </div>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className={`font-semibold text-xs ${isSelected ? 'text-zinc-100' : 'text-zinc-300'}`}>
+                    <div className="flex-1 min-w-0 overflow-hidden">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className={`font-semibold text-xs truncate ${isSelected ? 'text-zinc-100' : 'text-zinc-300'}`}>
                           {opt.title}
                         </span>
                         {isSelected && (
-                          <span className="flex items-center justify-center w-4 h-4 rounded-full bg-sky-500 text-black">
+                          <span className="flex items-center justify-center w-4 h-4 rounded-full bg-sky-500 text-black shrink-0">
                             <Check className="w-2.5 h-2.5 stroke-[3]" />
                           </span>
                         )}
                       </div>
                       <p className="text-[11px] text-zinc-400 truncate mt-0.5">{opt.subtitle}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-950/80 border border-zinc-800 text-zinc-400">
+                      <div className="flex flex-wrap items-center gap-1.5 mt-2 w-full">
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-950/80 border border-zinc-800 text-zinc-400 shrink-0">
                           {opt.tag}
                         </span>
-                        <span className="text-[10px] text-zinc-500 truncate">{opt.indication}</span>
+                        <span className="text-[10px] text-zinc-500 truncate flex-1 min-w-0">{opt.indication}</span>
                       </div>
                     </div>
                   </div>
@@ -308,17 +308,17 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           </div>
 
           {/* SECTION 3: SURGICAL URGENCY & TRIAGE PRIORITY */}
-          <div className="space-y-2">
-            <label className="text-zinc-300 font-semibold flex items-center justify-between">
+          <div className="space-y-2 w-full">
+            <label className="text-zinc-300 font-semibold flex flex-wrap items-center justify-between gap-1">
               <span>Surgical Urgency & SLA Priority</span>
               <span className="text-[10px] font-mono text-zinc-400">Additive SLA Priority</span>
             </label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 w-full">
               {/* Option 1: Standard Priority */}
               <div
                 onClick={() => setPriority('STANDARD')}
-                className={`p-3.5 rounded-xl border cursor-pointer transition select-none flex items-start gap-3 ${
+                className={`p-3 sm:p-3.5 rounded-xl border cursor-pointer transition select-none flex items-start gap-2.5 sm:gap-3 w-full min-w-0 ${
                   priority === 'STANDARD'
                     ? 'border-zinc-600 bg-zinc-900 text-white shadow-sm ring-1 ring-zinc-500/40'
                     : 'border-zinc-800/80 bg-zinc-950/60 hover:bg-zinc-900/50 text-zinc-400'
@@ -327,14 +327,14 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
                 <div className="w-8 h-8 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center justify-center shrink-0">
                   <Calendar className="w-4 h-4 text-zinc-400" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-xs text-zinc-200">Standard Schedule</span>
                     {priority === 'STANDARD' && (
                       <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
                     )}
                   </div>
-                  <p className="text-[11px] text-zinc-400 mt-0.5">
+                  <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">
                     Standard 5-day additive manufacturing turnaround. Batch nesting on SLM plate.
                   </p>
                 </div>
@@ -343,7 +343,7 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
               {/* Option 2: Urgent Trauma Surgery */}
               <div
                 onClick={() => setPriority('URGENT')}
-                className={`p-3.5 rounded-xl border cursor-pointer transition select-none flex items-start gap-3 ${
+                className={`p-3 sm:p-3.5 rounded-xl border cursor-pointer transition select-none flex items-start gap-2.5 sm:gap-3 w-full min-w-0 ${
                   priority === 'URGENT'
                     ? 'border-rose-600 bg-rose-950/40 text-rose-100 shadow-md shadow-rose-950/50 ring-1 ring-rose-500'
                     : 'border-zinc-800/80 bg-zinc-950/60 hover:bg-zinc-900/50 text-zinc-400'
@@ -358,8 +358,8 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
                 >
                   <Flame className="w-4 h-4" />
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span
                       className={`font-semibold text-xs ${
                         priority === 'URGENT' ? 'text-rose-300 font-bold' : 'text-zinc-200'
@@ -374,7 +374,7 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
                     )}
                   </div>
                   <p
-                    className={`text-[11px] mt-0.5 ${
+                    className={`text-[11px] mt-0.5 leading-relaxed ${
                       priority === 'URGENT' ? 'text-rose-300/80' : 'text-zinc-400'
                     }`}
                   >
@@ -386,9 +386,9 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
 
             {/* Glowing Urgent Alert Banner when Urgent is active */}
             {priority === 'URGENT' && (
-              <div className="p-2.5 rounded-lg bg-rose-950/70 border border-rose-800/80 text-rose-200 text-[11px] flex items-center gap-2 animate-in fade-in duration-200">
+              <div className="p-2.5 rounded-lg bg-rose-950/70 border border-rose-800/80 text-rose-200 text-[11px] flex items-center gap-2 animate-in fade-in duration-200 w-full">
                 <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-                <span>
+                <span className="min-w-0 flex-1">
                   <strong>Emergency Surgical Triage Flag Active:</strong> This case will be highlighted in
                   red across the pipeline board with priority dispatch to SLM Printer #1.
                 </span>
@@ -397,8 +397,8 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           </div>
 
           {/* SECTION 4: INTAKE OPERATOR & CLINICAL NOTES */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-            <div className="space-y-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-1 w-full">
+            <div className="space-y-1.5 min-w-0">
               <label className="text-zinc-400 block font-medium">Intake Specialist (Sign-Off)</label>
               <div className="relative">
                 <User className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -413,7 +413,7 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 min-w-0">
               <label className="text-zinc-400 block font-medium">Clinical Triage & DICOM Notes</label>
               <input
                 type="text"
@@ -426,9 +426,9 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           </div>
 
           {/* Regulatory Intake Callout Footnote */}
-          <div className="p-3 bg-zinc-900/60 border border-zinc-800 rounded-xl text-[11px] text-zinc-400 flex items-center justify-between">
+          <div className="p-2.5 sm:p-3 bg-zinc-900/60 border border-zinc-800 rounded-xl text-[11px] text-zinc-400 flex flex-wrap items-center justify-between gap-2 w-full">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse shrink-0" />
               <span>
                 Enters <strong>Step 1: 3D CAD Modeling & Surgical Planning</strong>
               </span>
