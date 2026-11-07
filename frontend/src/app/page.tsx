@@ -230,15 +230,17 @@ export default function MetiTrackDashboard() {
       />
 
       {/* Sequential Station Advance Modal */}
-      <AdvanceModal
-        order={advancingOrder}
-        isOpen={isAdvanceOpen}
-        onClose={() => setIsAdvanceOpen(false)}
-        onAdvanceSuccess={handleAdvanceSuccess}
-        activeRole={activeRole}
-        allSteps={steps}
-        allResources={resources}
-      />
+      {isAdvanceOpen && advancingOrder && (
+        <AdvanceModal
+          order={advancingOrder}
+          isOpen={isAdvanceOpen}
+          onClose={() => setIsAdvanceOpen(false)}
+          onAdvanceSuccess={handleAdvanceSuccess}
+          activeRole={activeRole}
+          allSteps={steps}
+          allResources={resources}
+        />
+      )}
 
       {/* New Implant Case Registration Modal */}
       <CreateOrderModal

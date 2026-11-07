@@ -172,26 +172,11 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
     }
   }, [order?.id, isOpen, activeRole]);
 
-  if (!isOpen || !order) return null;
-
-  const currentSeq = order.current_step?.sequence_order || 1;
-  const nextSeq = currentSeq + 1;
-  const nextStep = allSteps.find((s) => s.sequence_order === nextSeq);
-  const isFinalStep = currentSeq === 5;
-
-  // RBAC permission check
-  const isRoleAuthorized = (): boolean => {
-    if (activeRole === 'ADMIN') return true;
-    if (currentSeq === 1 && activeRole === 'BIOMEDICAL_ENGINEER') return true;
-    if ((currentSeq === 2 || currentSeq === 3) && activeRole === 'PRODUCTION_OPERATOR') return true;
-    if ((currentSeq === 4 || currentSeq === 5) && activeRole === 'QA_SPECIALIST') return true;
-    return false;
-  };
-
-  const authorized = isRoleAuthorized();
-
-  // Financial Live Cost Calculations
+  // Financial Live Cost Calculations - Always called unconditionally at the top level (React Rules of Hooks)
   const { stepCost, projectedTotal, hasStockError } = useMemo(() => {
+    if (!order) {
+      return { stepCost: 0, projectedTotal: 0, hasStockError: false };
+    }
     let cost = 0;
     let stockError = false;
 
@@ -211,7 +196,25 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
       projectedTotal: currentCost + cost,
       hasStockError: stockError,
     };
-  }, [selectedResources, allResources, order.total_cost]);
+  }, [selectedResources, allResources, order?.total_cost]);
+
+  if (!isOpen || !order) return null;
+
+  const currentSeq = order.current_step?.sequence_order || 1;
+  const nextSeq = currentSeq + 1;
+  const nextStep = allSteps.find((s) => s.sequence_order === nextSeq);
+  const isFinalStep = currentSeq === 5;
+
+  // RBAC permission check
+  const isRoleAuthorized = (): boolean => {
+    if (activeRole === 'ADMIN') return true;
+    if (currentSeq === 1 && activeRole === 'BIOMEDICAL_ENGINEER') return true;
+    if ((currentSeq === 2 || currentSeq === 3) && activeRole === 'PRODUCTION_OPERATOR') return true;
+    if ((currentSeq === 4 || currentSeq === 5) && activeRole === 'QA_SPECIALIST') return true;
+    return false;
+  };
+
+  const authorized = isRoleAuthorized();
 
   const handleAddResource = () => {
     const unused = allResources.find(
