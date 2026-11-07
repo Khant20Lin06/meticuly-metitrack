@@ -167,15 +167,15 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm flex justify-end"
+      className="detail-drawer-overlay fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm flex justify-end print:bg-transparent print:backdrop-blur-none"
     >
       {/* 480px Offcanvas Slide-over Panel (Clicking inside stops propagation) */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full sm:w-[480px] h-full bg-zinc-950 border-l border-zinc-800 shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-200 select-none"
+        className="detail-drawer-panel w-full sm:w-[480px] h-full bg-zinc-950 border-l border-zinc-800 shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-200 select-none print:bg-transparent print:border-none print:shadow-none print:w-full print:animate-none"
       >
         {/* Drawer Header */}
-        <div className="p-4 border-b border-zinc-800/80 bg-zinc-900/60 flex items-center justify-between">
+        <div className="detail-drawer-header p-4 border-b border-zinc-800/80 bg-zinc-900/60 flex items-center justify-between print:hidden">
           <div className="flex items-center gap-2.5">
             <span className="font-mono text-base font-bold text-white tracking-tight">
               {order.case_id}
@@ -200,7 +200,7 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
         </div>
 
         {/* Tab Selector Buttons */}
-        <div className="flex items-center border-b border-zinc-800/80 bg-zinc-900/40 px-2 text-xs">
+        <div className="detail-drawer-tabs flex items-center border-b border-zinc-800/80 bg-zinc-900/40 px-2 text-xs print:hidden">
           <button
             onClick={() => setActiveTab('3d')}
             className={`flex items-center gap-1.5 py-2.5 px-3 border-b-2 font-medium transition ${
@@ -652,7 +652,7 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
         </div>
 
         {/* Drawer Footer Action */}
-        <div className="p-3.5 sm:p-4 border-t border-zinc-800/80 bg-zinc-900/95 backdrop-blur shrink-0 sticky bottom-0 z-20 flex items-center justify-between select-none">
+        <div className="detail-drawer-footer p-3.5 sm:p-4 border-t border-zinc-800/80 bg-zinc-900/95 backdrop-blur shrink-0 sticky bottom-0 z-20 flex items-center justify-between select-none print:hidden">
           <div className="text-xs text-zinc-400 truncate max-w-[180px]">
             Station: <span className="font-semibold text-zinc-200">{order.current_step?.name}</span>
           </div>
