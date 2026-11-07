@@ -350,9 +350,10 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
           </div>
         </div>
 
-        {/* Form Body - Scrollable Container */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col justify-between w-full max-w-full">
-          <div className="p-3.5 sm:p-5 space-y-3.5 sm:space-y-4 text-xs w-full max-w-full">
+        {/* Form Container */}
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden w-full max-w-full">
+          {/* Scrollable Form Body */}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 space-y-3.5 sm:space-y-4 text-xs w-full max-w-full overscroll-contain">
           {/* Error Message Alert */}
           {errorMessage && (
             <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-800/80 text-rose-200 flex items-start gap-2.5">
@@ -593,8 +594,8 @@ export const AdvanceModal: React.FC<AdvanceModalProps> = ({
           </div>
         </div>
 
-        {/* Sticky Modal Footer Actions */}
-        <div className="p-3 sm:p-4 bg-zinc-900/95 border-t border-zinc-800/90 shrink-0 sticky bottom-0 z-20 backdrop-blur flex items-center justify-between gap-2 select-none w-full max-w-full">
+        {/* Pinned Modal Footer Actions */}
+        <div className="p-3 sm:p-4 bg-zinc-900/95 border-t border-zinc-800/90 shrink-0 flex items-center justify-between gap-2 select-none w-full max-w-full z-20">
           <button
             type="button"
             onClick={onClose}

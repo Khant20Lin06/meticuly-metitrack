@@ -164,9 +164,10 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col justify-between w-full max-w-full">
-          <div className="p-3.5 sm:p-6 space-y-3.5 sm:space-y-5 text-xs w-full max-w-full overflow-hidden">
+        {/* Form Container */}
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden w-full max-w-full">
+          {/* Scrollable Form Body */}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-3.5 sm:p-6 space-y-3.5 sm:space-y-5 text-xs w-full max-w-full overscroll-contain">
           {/* Error Message Alert */}
           {errorMessage && (
             <div className="p-3.5 rounded-xl bg-rose-950/90 border border-rose-800 text-rose-200 flex items-start gap-2.5 w-full">
@@ -438,8 +439,8 @@ export const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
 
           </div>
 
-          {/* Form Actions - Sticky Footer */}
-          <div className="p-3 sm:p-4 border-t border-zinc-800 bg-zinc-900/95 sticky bottom-0 z-20 backdrop-blur shrink-0 flex items-center justify-end gap-2.5 sm:gap-3 select-none">
+          {/* Form Actions - Pinned Bottom Footer */}
+          <div className="p-3 sm:p-4 border-t border-zinc-800 bg-zinc-900/95 shrink-0 flex items-center justify-end gap-2.5 sm:gap-3 select-none w-full z-20">
             <button
               type="button"
               onClick={onClose}
