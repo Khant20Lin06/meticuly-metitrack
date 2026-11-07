@@ -3,158 +3,182 @@
 import React from 'react';
 import {
   Search,
-  Filter,
-  AlertCircle,
   Plus,
   RefreshCw,
-  Sparkles,
-  Layers,
-  ShieldCheck,
-  Package
+  UserCheck,
+  Filter,
+  Shield,
+  Activity,
 } from 'lucide-react';
-import { ImplantType, Priority } from '@/types';
+import { RoleKey, ImplantType, OrderPriority } from '../types';
 
 interface TopBarProps {
   searchQuery: string;
-  setSearchQuery: (q: string) => void;
-  selectedType: string;
-  setSelectedType: (type: string) => void;
-  urgentOnly: boolean;
-  setUrgentOnly: (val: boolean) => void;
+  onSearchChange: (q: string) => void;
+  selectedPriority: string;
+  onPriorityChange: (p: string) => void;
+  selectedImplantType: string;
+  onImplantTypeChange: (t: string) => void;
+  activeRole: RoleKey;
+  onRoleChange: (r: RoleKey) => void;
   onRefresh: () => void;
-  isRefreshing: boolean;
-  onOpenNewCaseModal: () => void;
-  totalActiveCount: number;
-  urgentCount: number;
+  isLoading: boolean;
+  onOpenCreateModal: () => void;
 }
 
-export default function TopBar({
+export const TopBar: React.FC<TopBarProps> = ({
   searchQuery,
-  setSearchQuery,
-  selectedType,
-  setSelectedType,
-  urgentOnly,
-  setUrgentOnly,
+  onSearchChange,
+  selectedPriority,
+  onPriorityChange,
+  selectedImplantType,
+  onImplantTypeChange,
+  activeRole,
+  onRoleChange,
   onRefresh,
-  isRefreshing,
-  onOpenNewCaseModal,
-  totalActiveCount,
-  urgentCount,
-}: TopBarProps) {
-  return (
-    <header className="h-16 border-b border-slate-800 bg-[#0B101B]/95 backdrop-blur px-6 flex items-center justify-between gap-4 shrink-0 z-30">
-      {/* Left: Title & Subtitle */}
-      <div className="flex items-center gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-base font-bold text-slate-100 tracking-tight flex items-center gap-2">
-              MetiTrack MES
-              <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                Linear Flow
-              </span>
-            </h1>
-            <span className="text-slate-600 hidden sm:inline">•</span>
-            <span className="text-xs font-medium text-slate-400 hidden sm:inline">
-              Titanium Additive Manufacturing
-            </span>
-          </div>
-          <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
-            <span className="flex items-center gap-1 text-emerald-400/90 font-medium">
-              <ShieldCheck className="w-3.5 h-3.5" /> ISO 13485:2016 Compliant
-            </span>
-            <span className="text-slate-600">|</span>
-            <span>Cleanroom Plant #1</span>
-          </div>
-        </div>
-      </div>
+  isLoading,
+  onOpenCreateModal,
+}) => {
+  const roleConfigs: Record<RoleKey, { label: string; badge: string; color: string; desc: string }> = {
+    BIOMEDICAL_ENGINEER: {
+      label: 'Biomedical Engineer',
+      badge: 'Step 1: CAD',
+      color: 'bg-indigo-950/80 text-indigo-300 border-indigo-700/60',
+      desc: 'Authorized: Step 1 (Intake & 3D Design)',
+    },
+    PRODUCTION_OPERATOR: {
+      label: 'Production Operator',
+      badge: 'Steps 2-3: SLM/CNC',
+      color: 'bg-amber-950/80 text-amber-300 border-amber-700/60',
+      desc: 'Authorized: Step 2 (3D Printing) & Step 3 (Post-Processing)',
+    },
+    QA_SPECIALIST: {
+      label: 'QA Specialist',
+      badge: 'Steps 4-5: CMM/Pack',
+      color: 'bg-emerald-950/80 text-emerald-300 border-emerald-700/60',
+      desc: 'Authorized: Step 4 (Inspection) & Step 5 (Cleanroom Release)',
+    },
+    ADMIN: {
+      label: 'Plant Administrator',
+      badge: 'All Stations (1-5)',
+      color: 'bg-sky-950/80 text-sky-300 border-sky-700/60',
+      desc: 'Full Authority across all manufacturing stations',
+    },
+  };
 
-      {/* Middle: Clean Search & Filters */}
-      <div className="flex items-center gap-3 max-w-xl flex-1 justify-center">
-        {/* Search */}
-        <div className="relative w-full max-w-xs">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+  return (
+    <header className="h-16 border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur px-6 flex items-center justify-between gap-4 sticky top-0 z-20">
+      {/* Search Input Bar */}
+      <div className="flex items-center gap-3 flex-1 max-w-md">
+        <div className="relative w-full">
+          <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search Case ID or Patient Ref..."
-            className="w-full bg-slate-900/90 border border-slate-700/80 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 transition-all"
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search Case ID (e.g. CAS-2026-081) or Patient Ref..."
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-9 pr-3 py-1.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
           />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-2 text-xs text-slate-400 hover:text-slate-200"
-            >
-              ×
-            </button>
-          )}
         </div>
+      </div>
 
-        {/* Implant Type Filter */}
-        <div className="relative">
+      {/* Filter Selectors */}
+      <div className="flex items-center gap-2">
+        {/* Priority Filter */}
+        <div className="flex items-center gap-1.5 bg-zinc-900 border border-zinc-800 rounded-lg px-2 py-1 text-xs text-zinc-300">
+          <Filter className="w-3.5 h-3.5 text-zinc-400" />
           <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="bg-slate-900/90 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/60 cursor-pointer transition-all"
+            value={selectedPriority}
+            onChange={(e) => onPriorityChange(e.target.value)}
+            className="bg-transparent text-xs text-zinc-200 focus:outline-none cursor-pointer"
           >
-            <option value="ALL">All Implant Types</option>
-            <option value="CRANIAL_PLATE">Cranial Plates</option>
-            <option value="MANDIBULAR_RECON">Mandibular Reconstruction</option>
-            <option value="HIP_ACETABULAR_CUP">Acetabular Hip Cups</option>
-            <option value="SPINAL_CAGE">Spinal Fusion Cages</option>
+            <option value="ALL" className="bg-zinc-900 text-zinc-200">
+              All Priorities
+            </option>
+            <option value="URGENT" className="bg-zinc-900 text-rose-400">
+              🚨 Urgent
+            </option>
+            <option value="STANDARD" className="bg-zinc-900 text-zinc-200">
+              Standard
+            </option>
           </select>
         </div>
 
-        {/* Urgent Only Filter Button */}
-        <button
-          onClick={() => setUrgentOnly(!urgentOnly)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-            urgentOnly
-              ? 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_10px_rgba(244,63,94,0.25)]'
-              : 'bg-slate-900/90 text-slate-400 border-slate-700/80 hover:text-slate-200 hover:border-slate-600'
-          }`}
-        >
-          <AlertCircle className={`w-3.5 h-3.5 ${urgentOnly ? 'text-rose-400' : 'text-slate-400'}`} />
-          <span>Urgent</span>
-          {urgentCount > 0 && (
-            <span
-              className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                urgentOnly ? 'bg-rose-500 text-white' : 'bg-rose-500/30 text-rose-300'
-              }`}
-            >
-              {urgentCount}
-            </span>
-          )}
-        </button>
+        {/* Implant Type Filter */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-lg px-2 py-1 text-xs text-zinc-300">
+          <select
+            value={selectedImplantType}
+            onChange={(e) => onImplantTypeChange(e.target.value)}
+            className="bg-transparent text-xs text-zinc-200 focus:outline-none cursor-pointer"
+          >
+            <option value="ALL" className="bg-zinc-900 text-zinc-200">
+              All Anatomies
+            </option>
+            <option value="CRANIAL_PLATE" className="bg-zinc-900 text-zinc-200">
+              Cranial Plate
+            </option>
+            <option value="MANDIBULAR_RECON" className="bg-zinc-900 text-zinc-200">
+              Mandibular Jaw
+            </option>
+            <option value="HIP_ACETABULAR_CUP" className="bg-zinc-900 text-zinc-200">
+              Acetabular Hip Cup
+            </option>
+            <option value="SPINAL_CAGE" className="bg-zinc-900 text-zinc-200">
+              Spinal Fusion Cage
+            </option>
+          </select>
+        </div>
       </div>
 
-      {/* Right: Refresh & New Case CTA */}
+      {/* Right Side: Persona Switcher & Primary Action */}
       <div className="flex items-center gap-3">
-        {/* Active counter pill */}
-        <div className="hidden lg:flex items-center gap-1.5 text-xs bg-slate-900/80 border border-slate-800 px-3 py-1.5 rounded-lg text-slate-300">
-          <span className="w-2 h-2 rounded-full bg-cyan-400" />
-          <span>{totalActiveCount} Active Implants</span>
+        {/* ISO 13485 Persona Switcher */}
+        <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-lg pl-2.5 pr-1.5 py-1 text-xs">
+          <div className="flex items-center gap-1.5 text-zinc-400">
+            <UserCheck className="w-3.5 h-3.5 text-sky-400" />
+            <span className="text-[11px] font-medium text-zinc-400 hidden xl:inline">Operator Role:</span>
+          </div>
+
+          <select
+            value={activeRole}
+            onChange={(e) => onRoleChange(e.target.value as RoleKey)}
+            className="bg-zinc-800 text-zinc-100 text-xs font-medium rounded px-2 py-0.5 focus:outline-none border border-zinc-700/80 cursor-pointer"
+            title={roleConfigs[activeRole].desc}
+          >
+            <option value="ADMIN">👑 Plant Administrator (Full)</option>
+            <option value="BIOMEDICAL_ENGINEER">👨‍🔬 Biomedical Engineer (Step 1)</option>
+            <option value="PRODUCTION_OPERATOR">⚙️ Production Operator (Steps 2-3)</option>
+            <option value="QA_SPECIALIST">🛡️ QA Specialist (Steps 4-5)</option>
+          </select>
+
+          {/* Active Station Permission Badge */}
+          <span
+            className={`hidden md:inline-flex text-[10px] px-2 py-0.5 rounded border font-mono font-medium ${roleConfigs[activeRole].color}`}
+            title={roleConfigs[activeRole].desc}
+          >
+            {roleConfigs[activeRole].badge}
+          </span>
         </div>
 
-        {/* Refresh button */}
+        {/* Refresh Button */}
         <button
           onClick={onRefresh}
-          disabled={isRefreshing}
-          className="p-2 rounded-lg bg-slate-900/90 border border-slate-700/80 text-slate-300 hover:text-white hover:border-slate-600 transition-all disabled:opacity-50"
-          title="Reload manufacturing pipeline"
+          disabled={isLoading}
+          className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-800 transition disabled:opacity-50"
+          title="Refresh Plant Data"
         >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-sky-400' : ''}`} />
         </button>
 
-        {/* Primary CTA */}
+        {/* Create Case Button */}
         <button
-          onClick={onOpenNewCaseModal}
-          className="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-3.5 py-1.5 rounded-lg text-xs shadow-[0_0_15px_rgba(6,182,212,0.25)] transition-all cursor-pointer"
+          onClick={onOpenCreateModal}
+          className="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm shadow-sky-900/50 transition active:scale-[0.98]"
         >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
-          <span>New Implant Case</span>
+          <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+          <span>New Case</span>
         </button>
       </div>
     </header>
   );
-}
+};

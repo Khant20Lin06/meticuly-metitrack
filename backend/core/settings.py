@@ -12,9 +12,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'metitrack-insecure-dev-key-meticuly-2026')
 
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
+DEBUG = os.environ.get('DEBUG', 'False' if ENVIRONMENT == 'production' else 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']
+# Production Security Gate: Fail fast if booted in production with default insecure key
+if not DEBUG and SECRET_KEY == 'metitrack-insecure-dev-key-meticuly-2026':
+    raise ValueError(
+        "CRITICAL SECURITY CONFIGURATION ERROR: MetiTrack cannot boot in production mode with default insecure SECRET_KEY. "
+        "Provide a strong cryptographic SECRET_KEY in environment variables."
+    )
+
+# Hardened Whitelist: Reject wildcard host header injection (OWASP A05)
+raw_hosts = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,backend,testserver')
+ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(',') if h.strip()]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -26,6 +36,7 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
     'drf_spectacular',
 
@@ -81,6 +92,9 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+            'OPTIONS': {
+                'timeout': 20,
+            }
         }
     }
 
@@ -99,17 +113,71 @@ USE_TZ = True
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS settings for frontend integration
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+# CORS Hardening: Strictly whitelist frontend origins (OWASP A01 & A05)
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001',
+]
+extra_cors = os.environ.get('CORS_ALLOWED_ORIGINS')
+if extra_cors:
+    CORS_ALLOWED_ORIGINS.extend([o.strip() for o in extra_cors.split(',') if o.strip()])
 
-# Django REST Framework & OpenAPI Docs
+CORS_ALLOW_CREDENTIALS = True
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-operator-role',
+    'authorization',
+]
+
+# OWASP A05 Security Headers & Browser Hardening
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# Cookie Protection & Session Security
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Django REST Framework & SimpleJWT Authentication
+from datetime import timedelta
+
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'manufacturing.authentication.JWTCookieOrHeaderAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '120/minute',
+        'user': '600/minute',
+        'login': '10/minute',
+        'advance': '120/minute',
+    },
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
 }
 
 SPECTACULAR_SETTINGS = {
@@ -118,3 +186,7 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+# FDA 21 CFR Part 11 / ISO 13485 Cryptographic Non-Repudiation Signing Key
+DHR_SIGNING_KEY = os.environ.get('DHR_SIGNING_KEY', SECRET_KEY)
+

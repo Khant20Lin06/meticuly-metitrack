@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth.models import User
 from decimal import Decimal
-from .models import ProcessStep, Resource, Order, OrderResourceConsumption, OrderStepLog
+from .models import ProcessStep, Resource, Order, OrderResourceConsumption, OrderStepLog, OperatorProfile, SecurityAuditEvent
 
 
 class ProcessStepSerializer(serializers.ModelSerializer):
@@ -88,6 +90,7 @@ class OrderSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     can_advance = serializers.BooleanField(read_only=True)
     total_cost = serializers.SerializerMethodField()
+    cost_breakdown = serializers.SerializerMethodField()
     resource_summary = serializers.SerializerMethodField()
     step_logs = OrderStepLogSerializer(many=True, read_only=True)
 
@@ -106,6 +109,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'current_step',
             'can_advance',
             'total_cost',
+            'cost_breakdown',
             'resource_summary',
             'step_logs',
             'created_at',
@@ -117,6 +121,10 @@ class OrderSerializer(serializers.ModelSerializer):
         for c in obj.consumptions.select_related('resource').all():
             total += c.quantity * c.resource.cost_per_unit
         return float(total)
+
+    def get_cost_breakdown(self, obj):
+        from .services import CostService
+        return CostService.calculate_order_cost(obj)['cost_breakdown']
 
     def get_resource_summary(self, obj):
         summary = {}
@@ -135,6 +143,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class CreateOrderSerializer(serializers.ModelSerializer):
+    operator_name = serializers.CharField(max_length=100, required=False, default="Intake Coordinator")
+    notes = serializers.CharField(required=False, allow_blank=True, default="Case registered into MetiTrack manufacturing queue.")
+
     class Meta:
         model = Order
         fields = [
@@ -142,6 +153,8 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             'patient_ref',
             'implant_type',
             'priority',
+            'operator_name',
+            'notes',
         ]
 
     def validate_case_id(self, value):
@@ -151,6 +164,9 @@ class CreateOrderSerializer(serializers.ModelSerializer):
         return val
 
     def create(self, validated_data):
+        operator_name = validated_data.pop('operator_name', 'Intake Coordinator')
+        notes = validated_data.pop('notes', 'Case registered into MetiTrack manufacturing queue.')
+
         first_step = ProcessStep.objects.order_by('sequence_order').first()
         if not first_step:
             raise serializers.ValidationError("Cannot create order: No manufacturing process steps defined.")
@@ -165,10 +181,24 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             order=order,
             from_step=None,
             to_step=first_step,
-            operator_name="Intake Coordinator",
-            notes="Case registered into MetiTrack manufacturing queue."
+            operator_name=operator_name or "Intake Coordinator",
+            notes=notes or "Case registered into MetiTrack manufacturing queue."
         )
         return order
+
+
+class UpdateOrderMetadataSerializer(serializers.ModelSerializer):
+    """
+    Pure CRUD metadata update serializer.
+    Only allows updating non-workflow fields (patient_ref, priority).
+    State progression and step transitions are strictly guarded and handled via advance RPC.
+    """
+    class Meta:
+        model = Order
+        fields = [
+            'patient_ref',
+            'priority',
+        ]
 
 
 class ResourceInputItemSerializer(serializers.Serializer):
@@ -180,3 +210,107 @@ class AdvanceOrderSerializer(serializers.Serializer):
     operator_name = serializers.CharField(max_length=100, default="Biomedical Operator")
     notes = serializers.CharField(required=False, allow_blank=True, default="")
     resources = ResourceInputItemSerializer(many=True, required=False, default=list)
+    expected_step_sequence = serializers.IntegerField(required=False, allow_null=True, default=None)
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Custom JWT serializer that injects verified operator role, clinical title,
+    badge number, and authorized steps into both the JWT token claims and login response.
+    """
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        profile = getattr(user, 'operator_profile', None)
+        role = profile.role if profile else ('ADMIN' if user.is_superuser else 'GUEST')
+        full_name = user.get_full_name() or user.username
+
+        token['username'] = user.username
+        token['name'] = full_name
+        token['role'] = role
+        token['badge_number'] = profile.badge_number if profile else ''
+        token['is_superuser'] = user.is_superuser
+
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        user = self.user
+        profile = getattr(user, 'operator_profile', None)
+        role = profile.role if profile else ('ADMIN' if user.is_superuser else 'GUEST')
+        full_name = user.get_full_name() or user.username
+
+        from .services import RBACService
+        step_permissions = []
+        for step_num, allowed_roles in RBACService.STEP_ROLE_PERMISSIONS.items():
+            if role in allowed_roles:
+                step_permissions.append(step_num)
+
+        data['user'] = {
+            'id': user.id,
+            'username': user.username,
+            'name': full_name,
+            'email': user.email,
+            'role': role,
+            'title': profile.title if profile else ('Plant Administrator' if user.is_superuser else 'Operator'),
+            'badge_number': profile.badge_number if profile else 'METI-OP',
+            'certification_id': profile.certification_id if profile else 'ISO-13485-CERT',
+            'authorized_steps': step_permissions,
+            'is_superuser': user.is_superuser,
+        }
+        return data
+
+
+class OperatorDirectoryItemSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    role = serializers.CharField(source='operator_profile.role', default='ADMIN')
+    title = serializers.CharField(source='operator_profile.title', default='Operator')
+    badge_number = serializers.CharField(source='operator_profile.badge_number', default='METI-00')
+    authorized_steps = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'name',
+            'email',
+            'role',
+            'title',
+            'badge_number',
+            'authorized_steps',
+        ]
+
+    def get_name(self, obj):
+        return obj.get_full_name() or obj.username
+
+    def get_authorized_steps(self, obj):
+        from .services import RBACService
+        role = getattr(obj.operator_profile, 'role', 'ADMIN') if hasattr(obj, 'operator_profile') else ('ADMIN' if obj.is_superuser else 'GUEST')
+        return [step for step, roles in RBACService.STEP_ROLE_PERMISSIONS.items() if role in roles]
+
+
+class SecurityAuditEventSerializer(serializers.ModelSerializer):
+    event_type_display = serializers.CharField(source='get_event_type_display', read_only=True)
+    severity_display = serializers.CharField(source='get_severity_display', read_only=True)
+
+    class Meta:
+        model = SecurityAuditEvent
+        fields = [
+            'id',
+            'event_type',
+            'event_type_display',
+            'severity',
+            'severity_display',
+            'actor_username',
+            'ip_address',
+            'user_agent',
+            'endpoint',
+            'method',
+            'status_code',
+            'details',
+            'timestamp',
+        ]
+        read_only_fields = fields
+

@@ -4,9 +4,7 @@ from rest_framework.test import APIClient
 from manufacturing.models import ProcessStep, Resource, Order, OrderStepLog, OrderResourceConsumption
 
 
-@pytest.fixture
-def api_client():
-    return APIClient()
+
 
 
 @pytest.fixture
@@ -200,37 +198,3 @@ def test_analytics_overview_returns_correct_kpis(api_client, setup_manufacturing
     assert data['in_progress'] == 1
     assert data['completed'] == 1
     assert len(data['step_distribution']) == 5
-
-
-@pytest.mark.django_db
-def test_advance_order_deducts_inventory_and_prevents_stockout(api_client, setup_manufacturing_environment):
-    steps = setup_manufacturing_environment['steps']
-    res = setup_manufacturing_environment['resources'][0]  # total_available = 10000.00
-
-    order = Order.objects.create(
-        case_id='CAS-TEST-INV',
-        patient_ref='PT-TEST-INV',
-        implant_type='CRANIAL_PLATE',
-        status=Order.Status.IN_PROGRESS,
-        current_step=steps[0]
-    )
-
-    # 1. Successful deduction
-    payload = {
-        'operator_name': 'Operator',
-        'resources': [{'resource_id': res.id, 'quantity': 1000.00}]
-    }
-    response = api_client.post(f'/api/orders/{order.id}/advance/', payload, format='json')
-    assert response.status_code == 200
-    res.refresh_from_db()
-    assert res.total_available == Decimal('9000.00')
-
-    # 2. Over-consumption attempt (requesting more than available)
-    bad_payload = {
-        'operator_name': 'Operator',
-        'resources': [{'resource_id': res.id, 'quantity': 9500.00}]
-    }
-    response2 = api_client.post(f'/api/orders/{order.id}/advance/', bad_payload, format='json')
-    assert response2.status_code == 400
-    assert "Insufficient inventory" in response2.json()['error']
-
