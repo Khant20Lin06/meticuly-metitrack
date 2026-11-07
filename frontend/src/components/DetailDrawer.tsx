@@ -360,8 +360,8 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
                   ISO 13485:2016 Regulatory Notice
                 </span>
                 Modifications to patient reference or priority are logged into the append-only system
-                audit trail. Current Station and State Transitions cannot be altered via CRUD and require
-                station advance authorization.
+                audit trail. Current Station and State Transitions cannot be manually altered and require
+                certified electronic sign-off station advance.
               </div>
             </div>
           )}
@@ -574,10 +574,10 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({
                 )}
               </div>
 
-              {/* Sequential State Machine Log Header */}
+              {/* DHR Station Progression History Header */}
               <div className="flex items-center justify-between text-zinc-400 pt-1">
                 <span className="font-semibold text-zinc-300">
-                  Sequential State Machine Log
+                  Device History Record (DHR) Station Timeline
                 </span>
                 <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
                   <Lock className="w-3 h-3" /> Append-Only Protected

@@ -193,10 +193,10 @@ export const PipelineBoard: React.FC<PipelineBoardProps> = ({
                     </span>
                   </div>
 
-                  {/* Sub-header with code and role authorization badge */}
+                  {/* Sub-header with station phase and role authorization badge */}
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="font-mono text-zinc-500 uppercase tracking-wider">
-                      {step.code}
+                    <span className="font-mono text-zinc-400 font-semibold tracking-wide">
+                      Station Phase {step.sequence_order}
                     </span>
                     <span
                       className={`px-1.5 py-0.5 rounded border text-[10px] font-medium ${reqInfo.badgeColor}`}

@@ -186,7 +186,7 @@ export const SecurityAuditView: React.FC = () => {
             <span className="flex h-2 w-2 rounded-full bg-sky-400 animate-pulse" />
           </div>
           <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 hidden sm:block">
-            FDA 21 CFR Part 11 § 11.10(e) & ISO 13485:2016 Clause 7.5.8 Immutable Security Event Ledger (OWASP A09).
+            FDA 21 CFR Part 11 § 11.10(e) & ISO 13485:2016 Clause 7.5.8 Immutable Security Event Ledger.
           </p>
         </div>
 
@@ -261,7 +261,7 @@ export const SecurityAuditView: React.FC = () => {
             <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
           </div>
           <div className="text-lg sm:text-2xl font-bold font-mono text-amber-400">{authFailures}</div>
-          <div className="text-[10px] text-amber-300/70 truncate">OWASP A07 Blocked</div>
+          <div className="text-[10px] text-amber-300/70 truncate">Unauthorized Sign-ins Blocked</div>
         </div>
 
         <div

@@ -46,6 +46,16 @@ export const UDILabelGenerator: React.FC<UDILabelGeneratorProps> = ({ order, dhr
     dhrData?.dhr_seal_sha256 ||
     'a4f89d32b5e0c812ef7619d083bc54117e923e41b98f26034177d5a9c02e1189';
 
+  // Format clean Patient-Specific Implant (PSI) Device Classification code
+  const getPsiCode = (type: string) => {
+    const t = String(type).toUpperCase();
+    if (t.includes('CRANIAL')) return 'PSI-CP (Cranial)';
+    if (t.includes('MANDIB')) return 'PSI-MR (Mandible)';
+    if (t.includes('SPINAL')) return 'PSI-SC (Spine)';
+    if (t.includes('HIP') || t.includes('ACETABULAR')) return 'PSI-AC (Acetabular)';
+    return 'PSI-Custom';
+  };
+
   const handleCopyHash = () => {
     navigator.clipboard.writeText(sha256Seal);
     setCopiedHash(true);
@@ -356,8 +366,8 @@ export const UDILabelGenerator: React.FC<UDILabelGeneratorProps> = ({ order, dhr
             <div className="space-y-1">
               <div className="font-bold text-xs uppercase tracking-wide flex items-center justify-between text-black">
                 <span>{order.implant_type_display}</span>
-                <span className="font-mono text-[10px] bg-zinc-200 text-black px-1.5 py-0.2 rounded font-bold">
-                  {order.implant_type}
+                <span className="font-mono text-[10px] bg-zinc-200 text-black px-2 py-0.5 rounded font-bold" title="Patient-Specific Implant (PSI) Code">
+                  {getPsiCode(order.implant_type)}
                 </span>
               </div>
               <div className="text-[10px] text-zinc-800 font-medium">

@@ -207,7 +207,7 @@ export const AnalyticsView: React.FC = () => {
           </div>
 
           <span className="text-[10px] font-mono text-rose-300/80 border border-rose-800/60 px-2.5 py-1 rounded-lg self-start sm:self-auto whitespace-nowrap bg-rose-950/40">
-            Station: {bottleneckStation.code}
+            Station {bottleneckStation.sequence_order}: {bottleneckStation.name}
           </span>
         </div>
       ) : (
