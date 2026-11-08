@@ -191,7 +191,7 @@ export default function MetiTrackDashboard() {
         />
 
         {/* View Routing */}
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden">
           {activeView === 'board' && (
             <PipelineBoard
               orders={filteredOrders}

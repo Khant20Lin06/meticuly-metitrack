@@ -174,7 +174,7 @@ export const SecurityAuditView: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-zinc-950 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4 text-zinc-100 min-w-0">
+    <div className="flex-1 flex flex-col min-h-0 bg-zinc-950 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4 text-zinc-100 min-w-0">
       {/* 1. VIEW HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-zinc-800/80">
         <div>
@@ -371,11 +371,11 @@ export const SecurityAuditView: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. DESKTOP / TABLET DATA TABLE (hidden sm:block) */}
-      <div className="hidden sm:block rounded-xl border border-zinc-800/80 bg-zinc-900/40 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-950 border-b border-zinc-800 text-zinc-400 uppercase text-[10px] tracking-wider font-semibold">
+      {/* 4. DESKTOP / TABLET DATA TABLE (hidden sm:flex) */}
+      <div className="hidden sm:flex flex-col rounded-xl border border-zinc-800/80 bg-zinc-900/40 overflow-hidden shadow-sm">
+        <div className="overflow-x-auto overflow-y-auto max-h-[520px]">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead className="bg-zinc-950/95 border-b border-zinc-800 text-zinc-400 uppercase text-[10px] tracking-wider font-semibold sticky top-0 z-10 backdrop-blur-md">
               <tr>
                 <th className="py-3 px-4">Severity</th>
                 <th className="py-3 px-4">Event Type</th>
