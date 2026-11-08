@@ -33,8 +33,11 @@
   "exclude": [
     "node_modules",
     "src/__tests__",
+    "e2e",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "vitest.setup.ts"
+    "**/*.spec.ts",
+    "vitest.setup.ts",
+    "playwright.config.ts"
   ]
 }
