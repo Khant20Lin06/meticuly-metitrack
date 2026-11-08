@@ -8,6 +8,7 @@
 
 ![Pytest Suite](https://img.shields.io/badge/Pytest-105%2F105%20Passed%20(100%25)-brightgreen?style=flat&logo=pytest&logoColor=white)
 ![Vitest Suite](https://img.shields.io/badge/Vitest-28%2F28%20Passed%20(100%25)-brightgreen?style=flat&logo=vitest&logoColor=white)
+![Playwright Suite](https://img.shields.io/badge/Playwright-5%2F5%20Passed%20(100%25)-brightgreen?style=flat&logo=playwright&logoColor=white)
 ![ISO 13485](https://img.shields.io/badge/Compliance-ISO%2013485%3A2016-blue?style=flat)
 ![FDA 21 CFR Part 11](https://img.shields.io/badge/FDA-21%20CFR%20Part%2011%20%7C%20Part%20820%20%7C%20Part%20830-darkblue?style=flat)
 ![Django](https://img.shields.io/badge/Django-5.1-092E20?style=flat&logo=django&logoColor=white)
