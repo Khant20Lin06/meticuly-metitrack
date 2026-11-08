@@ -53,9 +53,9 @@ def setup_cost_testbed(db):
 @pytest.mark.django_db
 def test_cumulative_cost_formula_across_materials_machines_labor(setup_cost_testbed):
     """
-    User Specification:
+    Specification:
     Total Case Cost = SUM(Quantity * Unit Cost)
-    ပစ္စည်းကုန်ကျမှု၊ စက်နာရီနှင့် အင်ဂျင်နီယာ လုပ်အားခများကို အချိန်နှင့်တပြေးညီ ပေါင်းစပ်တွက်ချက်သည်။
+    Calculates material costs, machine time, and engineering labor in real time.
     """
     order = setup_cost_testbed['order']
     steps = setup_cost_testbed['steps']

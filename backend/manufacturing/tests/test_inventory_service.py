@@ -43,9 +43,9 @@ def setup_inventory_testbed(db):
 @pytest.mark.django_db
 def test_exact_140g_titanium_depletion_formula(setup_inventory_testbed):
     """
-    User Specification:
-    အော်ဒါတစ်ခုက Titanium အမှုန့် 140g သုံးလိုက်ပါက စက်ရုံ Inventory ထဲမှ
-    Stock_new = Stock_old - 140 ဟု အလိုအလျောက် နုတ်ပေးမည်။
+    Specification:
+    When an order consumes 140g of Titanium powder, factory inventory automatically updates:
+    Stock_new = Stock_old - 140.
     """
     order = setup_inventory_testbed['order']
     step = setup_inventory_testbed['step']
@@ -80,8 +80,8 @@ def test_exact_140g_titanium_depletion_formula(setup_inventory_testbed):
 @pytest.mark.django_db
 def test_insufficient_inventory_error_when_exceeding_stock(setup_inventory_testbed):
     """
-    User Specification:
-    လက်ကျန် မလုံလောက်ပါက Insufficient Inventory error ပြန်ပေးမည်။
+    Specification:
+    Returns InsufficientInventoryError when consumption exceeds available stock.
     """
     order = setup_inventory_testbed['order']
     step = setup_inventory_testbed['step']

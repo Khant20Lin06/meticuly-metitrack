@@ -203,12 +203,10 @@ npm run build
 
 ## 📄 Deliverable Documentation
 
-* **1-Page Written Summary:** [`docs/1-PAGE-SUMMARY.md`](docs/1-PAGE-SUMMARY.md) (comprehensive summary addressing all 5 assignment requirements).
-* **Architecture & ERD:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (system components, database schema, REST API contracts).
-* **Living Task & Progress Tracker:** [`docs/PROGRESS.md`](docs/PROGRESS.md) (complete audit trail of all implementation milestones).
-* **Architectural Decision Records (ADRs):** [`docs/DECISIONS.md`](docs/DECISIONS.md) (design decisions, concurrency strategy, cryptography).
-* **Domain Engineering Specification:** [`docs/medical_implant_mes_spec.md`](docs/medical_implant_mes_spec.md) (titanium powder genealogy, eDHR schema).
-* **Burmese Architecture Post-Mortem:** [`docs/CLEAN_ARCHITECTURE_DOMAINS_MY.md`](docs/CLEAN_ARCHITECTURE_DOMAINS_MY.md).
+* **Official 1-Page Written Summary:** [`docs/1-PAGE-SUMMARY.md`](docs/1-PAGE-SUMMARY.md) — Comprehensive technical summary addressing all 5 assignment requirements (requirements translation, system architecture, simplified user manual with 4 role personas, and software summary).
+* **Architecture & Database Schema:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — System component diagrams, Entity-Relationship Diagram (ERD), and REST API contracts.
+* **Architectural Decision Records (ADRs):** [`docs/DECISIONS.md`](docs/DECISIONS.md) — Rationale for domain selection, dedicated RPC state transitions, concurrency control, and asymmetric digital signatures.
+* **Domain & Functional Specification:** [`docs/SPEC.md`](docs/SPEC.md) — 5 cleanroom implant manufacturing steps, resource models, and regulatory compliance rules.
 
 ---
 

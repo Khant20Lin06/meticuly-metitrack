@@ -25,8 +25,8 @@ def setup_rbac_pipeline(db):
 @pytest.mark.django_db
 def test_step1_cad_biomedical_engineer_authorized(setup_rbac_pipeline):
     """
-    User Specification:
-    Step 1 (CAD) ကို Biomedical Engineer သာ advance လုပ်ခွင့်ရှိသည်။
+    Specification:
+    Only Biomedical Engineers are authorized to advance Step 1 (3D CAD Planning).
     """
     steps = setup_rbac_pipeline
     order = Order.objects.create(
@@ -48,8 +48,8 @@ def test_step1_cad_biomedical_engineer_authorized(setup_rbac_pipeline):
 @pytest.mark.django_db
 def test_step1_cad_production_operator_and_qa_rejected(setup_rbac_pipeline):
     """
-    User Specification:
-    Production Operator သို့မဟုတ် QA Specialist သည် Step 1 (CAD) ကို advance မလုပ်နိုင်စေရန် တင်းကြပ်စွာ စစ်ဆေးခြင်း။
+    Specification:
+    Production Operators and QA Specialists are rejected from advancing Step 1 (3D CAD Planning).
     """
     steps = setup_rbac_pipeline
     order = Order.objects.create(
@@ -81,8 +81,8 @@ def test_step1_cad_production_operator_and_qa_rejected(setup_rbac_pipeline):
 @pytest.mark.django_db
 def test_step4_qa_specialist_authorized(setup_rbac_pipeline):
     """
-    User Specification:
-    Step 4 (QA) ကို QA Specialist ကသာ လက်မှတ်ထိုးခွင့်ရှိစေရန် Server ဘက်ခြမ်းမှ တင်းကြပ်စွာ စစ်ဆေးခြင်း။
+    Specification:
+    Server-side verification: Only QA Specialists are authorized to sign off Step 4 (ISO 13485 QA Inspection).
     """
     steps = setup_rbac_pipeline
     order = Order.objects.create(
@@ -104,8 +104,8 @@ def test_step4_qa_specialist_authorized(setup_rbac_pipeline):
 @pytest.mark.django_db
 def test_step4_qa_biomedical_engineer_and_operator_rejected(setup_rbac_pipeline):
     """
-    User Specification:
-    Biomedical Engineer သို့မဟုတ် Production Operator သည် Step 4 (QA) ကို sign off မလုပ်နိုင်စေရန် တားဆီးခြင်း။
+    Specification:
+    Server-side enforcement: Biomedical Engineers and Production Operators are prevented from signing off Step 4 (QA).
     """
     steps = setup_rbac_pipeline
     order = Order.objects.create(
