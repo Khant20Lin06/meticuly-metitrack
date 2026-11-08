@@ -19,6 +19,10 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker&logoColor=white)
 
+<p align="center">
+  <img src="demo_video/metitrack_demo_preview.gif" alt="MetiTrack Cleanroom MES Demo Preview" width="100%" />
+</p>
+
 ---
 
 ## 🔬 Domain Overview
