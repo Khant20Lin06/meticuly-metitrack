@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --background: #09090b;
+  --foreground: #f4f4f5;
 }
 
 @theme inline {
@@ -12,20 +13,74 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #09090b;
+  color: #f4f4f5;
+  color-scheme: dark;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* FDA 21 CFR 830 Cleanroom UDI Thermal & Document Print Stylesheet */
+/* ==========================================================================
+   Cleanroom Dark Cyberpunk Scrollbar Engine (Cross-Browser)
+   Matches zinc-950 deep cleanroom palette with subtle rounded pill thumbs
+   ========================================================================== */
+
+/* Standard CSS (Firefox, Modern Chrome & Edge) */
+html,
+body,
+*,
+*::before,
+*::after {
+  scrollbar-width: thin;
+  scrollbar-color: #27272a #09090b;
+}
+
+/* WebKit Browsers (Chrome, Edge, Safari, Opera, Brave) */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 9999px;
+  border: 1px solid #18181b;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #0284c7; /* Clinical sky accent when actively dragging */
+}
+
+::-webkit-scrollbar-corner {
+  background: #09090b;
+}
+
+/* Utility classes for selective scroll control */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* ==========================================================================
+   FDA 21 CFR 830 Cleanroom UDI Thermal & Document Print Stylesheet
+   ========================================================================== */
 @media print {
   @page {
     size: auto;
