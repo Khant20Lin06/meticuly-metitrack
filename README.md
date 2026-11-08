@@ -7,6 +7,7 @@
 > **Submission Date:** November 2026  
 
 ![Pytest Suite](https://img.shields.io/badge/Pytest-105%2F105%20Passed%20(100%25)-brightgreen?style=flat&logo=pytest&logoColor=white)
+![Vitest Suite](https://img.shields.io/badge/Vitest-28%2F28%20Passed%20(100%25)-brightgreen?style=flat&logo=vitest&logoColor=white)
 ![ISO 13485](https://img.shields.io/badge/Compliance-ISO%2013485%3A2016-blue?style=flat)
 ![FDA 21 CFR Part 11](https://img.shields.io/badge/FDA-21%20CFR%20Part%2011%20%7C%20Part%20820%20%7C%20Part%20830-darkblue?style=flat)
 ![Django](https://img.shields.io/badge/Django-5.1-092E20?style=flat&logo=django&logoColor=white)
@@ -149,7 +150,22 @@ cd backend
 * `test_server_side_rbac.py`: Station-by-station permission enforcement
 * `test_domain1_crud.py` & `test_domain2_business_logic.py`: Clean architecture domain invariants
 
-### 2. Live End-to-End Simulation & Verification
+### 2. Frontend React Testing Library & Vitest Automated Suite
+MetiTrack features a dedicated 28-test frontend suite covering state transitions, role switches, UDI barcode generation, and modal interactions:
+```bash
+cd frontend
+npm test
+```
+**Result: 7 test files, 28 passed, 100% pass rate in 3.19s.**
+* `UDILabelGenerator.test.tsx`: 4/4 passed (FDA 21 CFR 830, GS1-128 linear barcode, ECC200 DataMatrix, DPM laser toggle)
+* `AdvanceModal.test.tsx`: 3/3 passed (BOM resource steppers, cumulative cost bar, sequential advance validation)
+* `CreateOrderModal.test.tsx`: 4/4 passed (HIPAA pseudo-hash generation, anatomical geometry selection, SLA urgency)
+* `OrderCard.test.tsx`: 6/6 passed (Urgency badges, click triggers, role authorization tooltip)
+* `TopBar.test.tsx`: 4/4 passed (Search filtering, priority dropdowns, 4-persona role switcher, modal triggers)
+* `SlimSidebar.test.tsx`: 3/3 passed (5-view cleanroom rail navigation, low-stock threshold alert counters)
+* `api.test.ts`: 4/4 passed (JWT token management, x-operator-role injection, RFC-7807 error parsing)
+
+### 3. Live End-to-End Simulation & Verification
 Verified via live integration runner across all 12 operational stages:
 * Multi-persona authentication (`admin`, `biomed_lead`, `slm_tech`, `qa_lead`)
 * Case creation (`CAS-2026-LIVE-38888`) with HIPAA-encrypted patient reference
