@@ -102,4 +102,10 @@ Records specific consumption linked to an order and step.
    - Real-time KPI cards: Total Orders, Active Orders, Completed Orders, Total Titanium Consumed, Total Machine Hours.
    - Breakdown charts (Recharts): Resource consumption per step, order distribution per step.
 5. **Medical Traceability Drawer / Audit Log:**
-   - Clicking an order shows full timeline of every step transition, exact timestamp, operator, and resource consumption.
+   - Clicking an order opens a 480px slide-over drawer showing the full timeline of every step transition, exact ISO 13485 timestamp, operator credentials, and accumulated BOM financial breakdown.
+6. **3D WebGL Titanium Mesh & FEA Inspection:**
+   - Embedded Three.js viewport allowing 360° orbital rotation, pan, zoom, solid vs wireframe FEA inspection modes, and SLM laser machine parameters.
+7. **Automated FDA UDI Barcode Label Generator:**
+   - Instant generation of ISO 15223-1 cleanroom packaging labels with GS1-128 linear barcode and 2D GS1 DataMatrix (ECC200).
+8. **Real-Time Security & Compliance Audit Stream:**
+   - Append-only security stream tracking authentication, RBAC violations, rate limiting, and cryptographic eDHR signature verifications.

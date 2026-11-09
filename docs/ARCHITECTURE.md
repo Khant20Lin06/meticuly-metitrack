@@ -4,40 +4,58 @@
 
 ```mermaid
 flowchart TD
-    subgraph Client["Frontend Client (Next.js 15 + React 19)"]
-        UI_Kanban["Manufacturing Kanban Pipeline"]
-        UI_AdvanceModal["Step Advance & Resource Modal"]
-        UI_Dashboard["Analytics & Resource KPIs (Recharts)"]
-        UI_Audit["Traceability & Audit Drawer"]
-        StateMgr["TanStack Query (Cache & Sync) + Zod"]
+    subgraph Client["Frontend Client (Next.js 16 + React 19 + TypeScript)"]
+        UI_TopBar["TopBar (Role Switcher & Session Header)"]
+        UI_Sidebar["SlimSidebar (Navigation: Board, Table, Metrics, Stock, Security)"]
+        UI_Board["PipelineBoard (5-Station Horizontal Cleanroom Kanban)"]
+        UI_AdvanceModal["AdvanceModal (BOM Quantity Steppers, Financial Bar, RBAC)"]
+        UI_Drawer["DetailDrawer (480px Slide-Over with WebGL 3D Mesh & eDHR Timeline)"]
+        UI_UDI["UDILabelGenerator (FDA UDI Barcode: GS1-128 & DataMatrix ECC200)"]
+        UI_Three["ThreeImplantViewer (Three.js WebGL Orbit & Solid/Wireframe FEA)"]
+        UI_Stock["WarehouseStockView (Titanium Inventory & Replenishment)"]
+        UI_Table["MasterTableView (Dense Filterable Queue & Sanitized CSV Export)"]
+        UI_Audit["SecurityAuditView (Immutable FDA 21 CFR Part 11 Audit Stream)"]
+        StateMgr["Typed API Client (lib/api.ts + React Hooks)"]
     end
 
-    subgraph API_Gateway["REST API Gateway (Django REST Framework)"]
-        Auth_RBAC["RBAC & Mock SSO Middleware"]
-        Router["DRF ViewSets & Routers"]
-        Serializers["DRF Serializers & Validators"]
+    subgraph API_Gateway["REST API Gateway (Django REST Framework 3.15)"]
+        Auth_RBAC["Zero-Trust RBAC & JWT Middleware"]
+        Throttle["Rate Limiter (AdvanceRateThrottle 120/min, Login 10/min)"]
+        Router["DRF ViewSets & Routers (/api/)"]
+        Serializers["DRF Serializers & Invariant Validators"]
     end
 
-    subgraph Core_Engine["Business Logic & State Machine"]
-        StateMachine["Sequential Transition Validator"]
-        ResourceTracker["Resource Consumption Engine"]
-        AuditLogger["Medical Traceability Logger (ISO 13485)"]
+    subgraph Core_Engine["Business Logic & Invariants Layer"]
+        StateMachine["Sequential State Machine (OrderService: Step N -> N+1)"]
+        ResourceTracker["Inventory & Atomic Depletion (InventoryService: select_for_update)"]
+        CostEngine["Financial Accounting Engine (CostService: Real-Time BOM Costs)"]
+        PKIEngine["FDA Digital Signatures (PKIService: ECDSA NIST P-256 / SHA-256)"]
+        PHICrypto["HIPAA Data Protection (PHIEncryptionService: AES-256-GCM / HKDF)"]
+        AuditLogger["Medical Traceability Logger (OrderStepLog & SecurityAuditEvent)"]
     end
 
-    subgraph Persistence["Database Layer"]
-        DB[(PostgreSQL / SQLite)]
+    subgraph Persistence["Persistence & Database Layer"]
+        DB[(PostgreSQL / SQLite via Django ORM)]
     end
 
-    UI_Kanban --> StateMgr
+    UI_Board --> StateMgr
     UI_AdvanceModal --> StateMgr
-    UI_Dashboard --> StateMgr
+    UI_Drawer --> StateMgr
+    UI_UDI --> StateMgr
+    UI_Three --> StateMgr
+    UI_Stock --> StateMgr
+    UI_Table --> StateMgr
     UI_Audit --> StateMgr
-    StateMgr -->|HTTP / JSON| Router
-    Router --> Auth_RBAC
-    Auth_RBAC --> Serializers
+    StateMgr -->|HTTP REST / JSON / Cookies| Throttle
+    Throttle --> Auth_RBAC
+    Auth_RBAC --> Router
+    Router --> Serializers
     Serializers --> StateMachine
     StateMachine --> ResourceTracker
-    ResourceTracker --> AuditLogger
+    ResourceTracker --> CostEngine
+    CostEngine --> PKIEngine
+    PKIEngine --> PHICrypto
+    PHICrypto --> AuditLogger
     AuditLogger --> DB
 ```
 
@@ -53,6 +71,8 @@ erDiagram
     Order ||--o{ OrderResourceConsumption : "consumes"
     ProcessStep ||--o{ OrderResourceConsumption : "logged at"
     Resource ||--o{ OrderResourceConsumption : "measured in"
+    User ||--|| OperatorProfile : "has certified role"
+    OperatorProfile ||--o{ OrderStepLog : "signs transition"
 
     ProcessStep {
         int id PK
@@ -60,15 +80,16 @@ erDiagram
         string code "STEP_CAD, STEP_PRINT, etc."
         string name
         string description
+        json suggested_resource_ids
     }
 
     Order {
         int id PK
         string case_id "Unique (CAS-2026-xxx)"
-        string patient_ref "Anonymized (PT-xxxx)"
-        string implant_type "CRANIAL, HIP, etc."
+        string patient_ref "AES-256-GCM Encrypted (HIPAA)"
+        string implant_type "CRANIAL, HIP, JAW, SPINAL"
         string priority "STANDARD, URGENT"
-        string status "PENDING, IN_PROGRESS, COMPLETED"
+        string status "PENDING, IN_PROGRESS, COMPLETED, CANCELLED"
         int current_step_id FK
         datetime created_at
         datetime updated_at
@@ -76,11 +97,11 @@ erDiagram
 
     Resource {
         int id PK
-        string name
+        string name "Unique"
         string category "MATERIAL, MACHINE_TIME, LABOR"
         string unit "GRAMS, HOURS, UNITS"
-        float cost_per_unit
-        float total_available
+        decimal cost_per_unit
+        decimal total_available "Real-time balance"
     }
 
     OrderResourceConsumption {
@@ -88,7 +109,7 @@ erDiagram
         int order_id FK
         int step_id FK
         int resource_id FK
-        float quantity "Must be > 0"
+        decimal quantity "Must be > 0"
         datetime logged_at
         string logged_by
     }
@@ -102,6 +123,28 @@ erDiagram
         string operator_name
         string notes
     }
+
+    OperatorProfile {
+        int id PK
+        int user_id FK
+        string role "BIOMEDICAL_ENGINEER, PRODUCTION_OPERATOR, QA_SPECIALIST, ADMIN"
+        string certification_id "ISO 13485 ID"
+        string public_key_pem "ECDSA SECP256R1"
+        string key_fingerprint "SHA256 Fingerprint"
+        string private_key_pem "Encrypted at rest (AES-256-GCM)"
+    }
+
+    SecurityAuditEvent {
+        int id PK
+        string event_type "AUTH_SUCCESS, AUTH_FAILED, ROLE_VIOLATION, TAMPER_DETECTED, RATE_LIMITED, DHR_SIGNED"
+        string severity "INFO, WARNING, CRITICAL"
+        string actor_username
+        string endpoint
+        string method
+        int status_code
+        json details
+        datetime timestamp
+    }
 ```
 
 ---
@@ -109,8 +152,8 @@ erDiagram
 ## 3. REST API Contracts
 
 ### 3.1 `GET /api/orders/`
-Returns all active and completed orders with nested current step and aggregated resource costs.
-- **Query Params:** `status`, `implant_type`, `priority`
+Returns active and completed orders with nested current step and aggregated resource consumption.
+- **Query Params:** `status`, `implant_type`, `priority`, `search`
 - **Response `200 OK`:**
 ```json
 [
@@ -128,9 +171,10 @@ Returns all active and completed orders with nested current step and aggregated 
       "name": "3D Metal Printing (SLM)"
     },
     "total_resources_consumed": [
-      { "resource_name": "Titanium Powder", "quantity": 120.0, "unit": "GRAMS" },
+      { "resource_name": "Titanium Ti-6Al-4V Grade 23 Powder", "quantity": 120.0, "unit": "GRAMS" },
       { "resource_name": "Biomedical Engineer Labor", "quantity": 3.5, "unit": "HOURS" }
     ],
+    "accumulated_cost": "1420.50",
     "created_at": "2026-11-03T08:00:00Z"
   }
 ]
@@ -149,12 +193,13 @@ Creates a new patient implant order. Automatically placed at Step 1 (`STEP_CAD`)
 ```
 
 ### 3.3 `POST /api/orders/{id}/advance/`
-Advances an order to the next sequential step while logging operator notes and consumed resources.
+Advances an order strictly to the next sequential step ($N \rightarrow N+1$) while logging operator notes, checking RBAC authorization, and atomically deducting inventory.
 - **Request Body:**
 ```json
 {
   "operator_name": "Khant Lin (Biomedical Lead)",
   "notes": "3D design approved by surgeon Dr. Somchai. Slicing completed.",
+  "expected_step_sequence": 1,
   "resources": [
     {
       "resource_id": 1,
@@ -167,44 +212,44 @@ Advances an order to the next sequential step while logging operator notes and c
   ]
 }
 ```
-- **Validation:**
+- **Validation & Enforcement:**
   - Order must not already be `COMPLETED`.
   - Next step is strictly `current_step.sequence_order + 1`.
   - Quantities must be $> 0$.
-  - Atomic database transaction: If logging resources fails, step transition rolls back.
+  - Atomic database transaction (`select_for_update`): If logging resources fails or inventory is insufficient, step transition rolls back.
+  - Rate-limited via `AdvanceRateThrottle` (120 req/min).
 
-### 3.4 `GET /api/analytics/overview/`
-Returns dashboard aggregations:
-```json
-{
-  "total_orders": 12,
-  "in_progress": 8,
-  "completed": 4,
-  "orders_per_step": {
-    "1": 2,
-    "2": 3,
-    "3": 1,
-    "4": 1,
-    "5": 1
-  },
-  "resource_totals": [
-    { "category": "MATERIAL", "name": "Titanium Powder", "total_consumed": 980.5, "unit": "GRAMS" },
-    { "category": "MACHINE_TIME", "name": "3D SLM Printer", "total_consumed": 42.0, "unit": "HOURS" },
-    { "category": "LABOR", "name": "Biomedical Engineer", "total_consumed": 28.5, "unit": "HOURS" }
-  ]
-}
-```
+### 3.4 `GET /api/orders/{id}/history/`
+Returns full ISO 13485 audit trail: all previous step transitions, timestamps, operator signatures, and resource consumptions.
+
+### 3.5 `GET /api/orders/{id}/cost-breakdown/`
+Returns granular itemized financial accounting split into Raw Materials, Machine Time, Labor, and station-by-station totals ($\text{Total Cost} = \sum [\text{Quantity} \times \text{Unit Cost}]$).
+
+### 3.6 `GET /api/analytics/overview/`
+Returns plant-wide telemetry: WIP bottleneck distribution per station, total cases, and itemized material consumption totals.
+
+### 3.7 `POST /api/auth/token/`
+Authenticates certified operator persona and returns JWT access/refresh tokens alongside secure HttpOnly session cookies.
+
+### 3.8 `GET /api/security-logs/`
+Returns immutable FDA 21 CFR Part 11 append-only security audit trail monitoring logins, role violations, and cryptographic verification results.
 
 ---
 
 ## 4. Frontend Component Hierarchy
-- `app/layout.tsx` (Global layout, TanStack Query Client provider, Navigation Header with Role Switcher)
-- `app/page.tsx` (Main Manufacturing Dashboard)
-  - `components/Header.tsx` (Meticuly branding, current role pill, quick statistics)
-  - `components/KanbanBoard.tsx` (5 Columns for 5 Steps)
-    - `components/KanbanColumn.tsx` (Header with order count badge, Droppable zone)
-      - `components/OrderCard.tsx` (Case ID, Urgent badge, Patient Ref, Consumed resources pill, "Advance" button)
-  - `components/AdvanceModal.tsx` (Modal with dynamic resource inputs per step, operator signature, notes, Zod validation)
-  - `components/CreateOrderModal.tsx` (Modal to create case with React Hook Form + Zod)
-  - `components/AnalyticsDrawer.tsx` or Tab (Recharts for Titanium usage & Step distribution)
-  - `components/TraceabilityModal.tsx` (Full audit timeline per order with ISO 13485 timestamps)
+- `app/layout.tsx` (Root layout, Geist font definitions, metadata)
+- `app/page.tsx` (Main MES App Container, state synchronization, tab router)
+  - `components/TopBar.tsx` (Meticuly branding, Quick Role Switcher, search, urgency filter, +New Case CTA)
+  - `components/SlimSidebar.tsx` (Cleanroom navigation: Board, Table, Metrics, Stock, Security)
+  - `components/PipelineBoard.tsx` (5-Station Horizontal Kanban Board with WIP badges)
+    - `components/OrderCard.tsx` (Case ID, anatomical tag, progress bar, accumulated cost, Advance CTA)
+  - `components/AdvanceModal.tsx` (Numerical BOM quantity steppers, live financial bar, certified operator credentials)
+  - `components/CreateOrderModal.tsx` (HIPAA-compliant masked case intake modal)
+  - `components/DetailDrawer.tsx` (480px Slide-Over Drawer)
+    - `components/ThreeImplantViewer.tsx` (Interactive Three.js WebGL 3D Titanium Mesh Viewport)
+    - `components/UDILabelGenerator.tsx` (FDA 21 CFR Part 830 UDI GS1-128 & DataMatrix ECC200)
+  - `components/AnalyticsView.tsx` (Recharts cleanroom WIP distribution & resource KPIs)
+  - `components/WarehouseStockView.tsx` (Titanium inventory balances & stock replenishment)
+    - `components/ReplenishModal.tsx` (Batch powder restock dialog)
+  - `components/MasterTableView.tsx` (Dense multi-column sorting, filtering, and sanitized CSV export)
+  - `components/SecurityAuditView.tsx` (Real-time append-only security and tamper audit log)
