@@ -53,7 +53,12 @@ jobs:
       - name: Install Frontend Dependencies
         run: |
           cd frontend
-          npm ci
+          npm ci --legacy-peer-deps
+
+      - name: Run Vitest Unit Tests
+        run: |
+          cd frontend
+          npm test
 
       - name: Run Next.js Production Build
         run: |
